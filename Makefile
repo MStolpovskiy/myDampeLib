@@ -29,22 +29,26 @@ LIBS += -lTMVA
 #------------------------------------------------------------------------------
 
 SrcSuf = cpp
-
-CLUMONIO       = $(patsubst %.$(SrcSuf),%.$(ObjSuf),$(wildcard *.$(SrcSuf)))
-CLUMONIS       = $(wildcard *.$(SrcSuf))
-CLUMONI        = vacorrvalidation$(ExeSuf)
+ObjSuf = o
+IncSuf = hpp
 
 MYLIBDS       = source
 MYLIBDO       = obj
-MYLIBS        = $(wildcard $(MYLIBDS)/*.$(SrcSuf))
-MYLIBO        = $(patsubst %.$(SrcSuf),%.$(ObjSuf),$(notdir $(MYLIBS)))
-MYLIBOBJS     = $(addprefix $(MYLIBDO)/, $(MYLIBO))
+MYLIBDI       = include
 
-OBJS          = $(MYLIBOBJS)
+MYLIBS        = $(wildcard $(MYLIBDS)/*.$(SrcSuf))
+MYLIBO_       = $(patsubst %.$(SrcSuf),%.$(ObjSuf),$(notdir $(MYLIBS)))
+MYLIBO        = $(addprefix $(MYLIBDO)/, $(MYLIBO_))
+MYLIBI_       = $(patsubst %.$(SrcSuf),%.$(IncSuf),$(notdir $(MYLIBS)))
+MYLIBI        = $(addprefix $(MYLIBDI)/, $(MYLIBI_))
+
+OBJS          = $(MYLIBO)
 SRCS          = $(MYLIBS)
+INCS          = $(MYLIBI)
 
 $(info OBJS is $(OBJS))
 $(info SRCS is $(SRCS))
+$(info INCS is $(INCS))
 
 OUTPUTFILE    = bin/libmydampe.a
 
@@ -54,24 +58,15 @@ endif
 
 #------------------------------------------------------------------------------
 
-
-.SUFFIXES: .$(SrcSuf) .$(ObjSuf) .$(DllSuf)
-
 .PHONY: all
 
 all:            $(OUTPUTFILE)
 
-# $(OBJS):        $(MYLIBS)
-# 				$(CXX) $(LDFLAGS) $(CXXFLAGS) -c $<
+$(OBJS):        $(SRCS) $(INCS)
+				$(CXX) $(CXXFLAGS) -c $(SRCS)
 
 $(OUTPUTFILE):  $(OBJS)
 				$(CXX) -o $@ $^ $(LDFLAGS) $(LIBS)
 
 clean:
 				@rm -f $(OBJS) $(TRACKMATHSRC) $(OUTPUTFILE)
-
-
-# .SUFFIXES: .$(SrcSuf)
-
-# .$(SrcSuf).$(ObjSuf):
-#         $(CXX)  $(CXXFLAGS) -c $<
