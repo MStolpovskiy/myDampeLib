@@ -42,7 +42,7 @@ MYLIBOBJS     = $(addprefix $(MYLIBDO)/, $(MYLIBO))
 
 OBJS          = $(MYLIBOBJS)
 
-# $(info OBJS is $(OBJS))
+$(info OBJS is $(OBJS))
 
 OUTPUTFILE    = bin/libmydampe.a
 
@@ -60,7 +60,7 @@ endif
 all:            $(OUTPUTFILE)
 
 $(OBJS):        $(MYLIBS)
-				$(LD) $(LDFLAGS) $(CXXFLAGS) -c -Fo"$@" $<
+				$(CXX) $(LDFLAGS) $(CXXFLAGS) -c $<
 
 $(OUTPUTFILE):  $(OBJS)
 				$(LD) $(LDFLAGS) $^ $(LIBS) $(OutPutOpt)$@
