@@ -61,14 +61,11 @@ endif
 
 all:            $(OUTPUTFILE)
 
-$(OBJS):        $(MYLIBS)
-				$(CXX) $(LDFLAGS) $(CXXFLAGS) -c $<
+# $(OBJS):        $(MYLIBS)
+# 				$(CXX) $(LDFLAGS) $(CXXFLAGS) -c $<
 
 $(OUTPUTFILE):  $(OBJS)
-				$(LD) $(LDFLAGS) $^ $(LIBS) $(OutPutOpt)$@
-				echo $(LD) $(LDFLAGS) $^ $(LIBS) $(OutPutOpt)$@
-				$(MT_EXE)
-				@echo "$@ done"
+				$(CXX) -o $@ $^ $(LDFLAGS) $(LIBS)
 
 clean:
 				@rm -f $(OBJS) $(TRACKMATHSRC) $(OUTPUTFILE)
