@@ -28,23 +28,23 @@ LIBS += -lTMVA
 
 #------------------------------------------------------------------------------
 
-SrcSuf = cpp
-ObjSuf = o
-IncSuf = hpp
+SrcSuf := cpp
+ObjSuf := o
+IncSuf := hpp
 
-MYLIBDS       = source
-MYLIBDO       = obj
-MYLIBDI       = include
+MYLIBDS := source
+MYLIBDO := obj
+MYLIBDI := include
 
-MYLIBS        = $(wildcard $(MYLIBDS)/*.$(SrcSuf))
-MYLIBO_       = $(patsubst %.$(SrcSuf),%.$(ObjSuf),$(notdir $(MYLIBS)))
-MYLIBO        = $(addprefix $(MYLIBDO)/, $(MYLIBO_))
-MYLIBI_       = $(patsubst %.$(SrcSuf),%.$(IncSuf),$(notdir $(MYLIBS)))
-MYLIBI        = $(addprefix $(MYLIBDI)/, $(MYLIBI_))
+MYLIBS  := $(wildcard $(MYLIBDS)/*.$(SrcSuf))
+MYLIBO_ := $(patsubst %.$(SrcSuf),%.$(ObjSuf),$(notdir $(MYLIBS)))
+MYLIBO  := $(addprefix $(MYLIBDO)/, $(MYLIBO_))
+MYLIBI_ := $(patsubst %.$(SrcSuf),%.$(IncSuf),$(notdir $(MYLIBS)))
+MYLIBI  := $(addprefix $(MYLIBDI)/, $(MYLIBI_))
 
-OBJS          = $(MYLIBO)
-SRCS          = $(MYLIBS)
-INCS          = $(MYLIBI)
+OBJS    := $(MYLIBO)
+SRCS    := $(MYLIBS)
+INCS    := $(MYLIBI)
 
 $(info OBJS is $(OBJS))
 $(info SRCS is $(SRCS))
@@ -58,15 +58,18 @@ endif
 
 #------------------------------------------------------------------------------
 
-.PHONY: all
+.PHONY: all clean
 
 all:            $(OUTPUTFILE)
 
-$(OBJS):        $(SRCS) $(INCS)
-				$(CXX) $(CXXFLAGS) -c $(SRCS)
+# $(OBJS):        $(SRCS) $(INCS)
+# 				$(CXX) $(CXXFLAGS) -c $(SRCS)
 
 $(OUTPUTFILE):  $(OBJS)
-				$(CXX) -o $@ $^ $(LDFLAGS) $(LIBS)
+				$(CXX) $(CXXFLAGS) -c $(SRCS)
+				@echo "Compilation complete!"
+				$(CXX) $(LDFLAGS) $^ $(LIBS) -o $@
+				@echo "Linking complete!"
 
 clean:
 				@rm -f $(OBJS) $(TRACKMATHSRC) $(OUTPUTFILE)
