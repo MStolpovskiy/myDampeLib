@@ -21,7 +21,7 @@ endif
 
 CXXFLAGS += -Wextra -Wshadow -Wnon-virtual-dtor -pedantic
 CXXFLAGS += -I $(DMPSWSYS)/include
-CXXFLAGS += -I $(MYHOMEDIR)/DAMPE/myDampeLib/include
+CXXFLAGS += -I include
 
 LIBS += -L $(DMPSWSYS)/lib -lDmpEvent -lDmpService
 LIBS += -lTMVA
@@ -60,7 +60,7 @@ endif
 all:            $(OUTPUTFILE)
 
 $(OBJS):        $(MYLIBS)
-				$(LD) $(LDFLAGS) -c -Fo"$@" $<
+				$(LD) $(LDFLAGS) $(CXXFLAGS) -c -Fo"$@" $<
 
 $(OUTPUTFILE):  $(OBJS)
 				$(LD) $(LDFLAGS) $^ $(LIBS) $(OutPutOpt)$@
