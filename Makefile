@@ -41,8 +41,10 @@ MYLIBO        = $(patsubst %.$(SrcSuf),%.$(ObjSuf),$(notdir $(MYLIBS)))
 MYLIBOBJS     = $(addprefix $(MYLIBDO)/, $(MYLIBO))
 
 OBJS          = $(MYLIBOBJS)
+SRCS          = $(MYLIBS)
 
 $(info OBJS is $(OBJS))
+$(info SRCS is $(SRCS))
 
 OUTPUTFILE    = bin/libmydampe.a
 
