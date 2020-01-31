@@ -35,6 +35,7 @@ IncSuf := hpp
 MYLIBDS := source
 MYLIBDO := obj
 MYLIBDI := include
+MYLIBDB := bin
 
 MYLIBS  := $(wildcard $(MYLIBDS)/*.$(SrcSuf))
 MYLIBO_ := $(patsubst %.$(SrcSuf),%.$(ObjSuf),$(notdir $(MYLIBS)))
@@ -50,7 +51,7 @@ $(info OBJS is $(OBJS))
 $(info SRCS is $(SRCS))
 $(info INCS is $(INCS))
 
-OUTPUTFILE    = bin/libmydampe.a
+OUTPUTFILE    = $(MYLIBDB)/libmydampe.a
 
 ifeq ($(ARCH),aix5)
 MAKESHARED    = /usr/vacpp/bin/makeC++SharedLib
@@ -65,11 +66,19 @@ all:            $(OUTPUTFILE)
 # $(OBJS):        $(SRCS) $(INCS)
 # 				$(CXX) $(CXXFLAGS) -c $(SRCS)
 
-$(OUTPUTFILE):  $(OBJS)
-				$(CXX) $(CXXFLAGS) -c $(SRCS)
+$(MYLIBDO)/%.$(ObjSuf): $(MYLIBDS)/%.$(SrcSuf) | $(MYLIBDO)
+				$(CXX) $(CXXFLAGS) -c $< -o $@
 				@echo "Compilation complete!"
+
+$(MYLIBDO):
+				mkdir $@
+
+$(OUTPUTFILE):  $(OBJS) | $(MYLIBDB)
 				$(CXX) $(LDFLAGS) $^ $(LIBS) -o $@
 				@echo "Linking complete!"
+
+$(MYLIBDB):
+				mkdir $@
 
 clean:
 				@rm -f $(OBJS) $(TRACKMATHSRC) $(OUTPUTFILE)
