@@ -74,7 +74,7 @@ $(MYLIBDO):
 				mkdir $@
 
 $(OUTPUTFILE):  $(OBJS) | $(MYLIBDB)
-				ar rcs $@ $^ $(LIBS)
+				ar rcs $@ $^
 				@echo "Linking complete!"
 # 				$(CXX) $(LDFLAGS) $^ $(LIBS) -o $@
 
