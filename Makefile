@@ -63,13 +63,13 @@ $(OBJS):        $(MYLIBS)
 				$(LD) $(LDFLAGS) -c -Fo"$@" $<
 
 $(OUTPUTFILE):  $(OBJS)
-                $(LD) $(LDFLAGS) $^ $(LIBS) $(OutPutOpt)$@
-                echo $(LD) $(LDFLAGS) $^ $(LIBS) $(OutPutOpt)$@
-                $(MT_EXE)
-                @echo "$@ done"
+				$(LD) $(LDFLAGS) $^ $(LIBS) $(OutPutOpt)$@
+				echo $(LD) $(LDFLAGS) $^ $(LIBS) $(OutPutOpt)$@
+				$(MT_EXE)
+				@echo "$@ done"
 
 clean:
-                @rm -f $(OBJS) $(TRACKMATHSRC) $(OUTPUTFILE)
+				@rm -f $(OBJS) $(TRACKMATHSRC) $(OUTPUTFILE)
 
 
 # .SUFFIXES: .$(SrcSuf)
