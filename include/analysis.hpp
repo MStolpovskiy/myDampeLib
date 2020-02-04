@@ -76,7 +76,7 @@ namespace myDampeLib {
         /*
         The virtual function to redefine
         */
-        virtual void analyseOneEvent();
+        virtual void analyseOneEvent() = 0;
 
     protected:
         string mOutputFilename;
