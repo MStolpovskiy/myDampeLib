@@ -1,18 +1,16 @@
 #include "analysis.hpp"
 
 myDampeLib::DmpAnalysis::DmpAnalysis():
-    mOutputFilename("")
+    DmpAnalysis("")
 {
 }
 
 myDampeLib::DmpAnalysis::DmpAnalysis(const char * filename) :
-    DmpAnalysis()
+    DmpAnalysis(string(filename))
 {
-    DmpAnalysis(string(filename));
 }
 
 myDampeLib::DmpAnalysis::DmpAnalysis(string filename) :
-    DmpAnalysis(),
     mOutputFilename(filename)
 {
 }
