@@ -55,7 +55,7 @@ void myDampeLib::DmpAnalysis::add2TChain(string filename, bool verbose/*=true*/)
         mNFilesChained++;
     }
 
-    mNEvents = t->GetEntries();
+    mNEvents = mChain->GetEntries();
 }
 
 void myDampeLib::DmpAnalysis::run(int n/*=-1*/)
