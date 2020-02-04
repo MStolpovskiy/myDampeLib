@@ -30,6 +30,8 @@ void myDampeLib::DmpAnalysis::openOutputFile(string option/*="RECREATE"*/)
 void myDampeLib::DmpAnalysis::closeOutputFile()
 {
     mOutputFile->Close();
+    delete mOutputFile;
+    delete mChain;
 }
 
 void myDampeLib::DmpAnalysis::setTChain(const char * filename, bool verbose/*=true*/)
@@ -60,8 +62,8 @@ void myDampeLib::DmpAnalysis::add2TChain(string filename, bool verbose/*=true*/)
 
 void myDampeLib::DmpAnalysis::run(int n/*=-1*/)
 { 
-    int nnn=(n < 0)? mNEvents : n;
-    for(int i=0; i<nnn; i++) {
+    int nnn = (n < 0)? mNEvents : n;
+    for(int i = 0; i < nnn; i++) {
         if ((i % (nnn / 10 + 1)) == int(nnn / 10)) {
             int percentage = 10. * int((i + 1) / int(nnn / 10));
             cout << "Processing percentage: " << percentage << "% \n";

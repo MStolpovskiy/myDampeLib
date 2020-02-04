@@ -70,6 +70,8 @@ namespace myDampeLib {
 
         /*
         Main loop over the events
+        if n < 0, analyse all the events
+        Otherwise run over only n events
         */
         void run(int n=-1);
 
