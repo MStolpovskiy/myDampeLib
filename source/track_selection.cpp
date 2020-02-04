@@ -1,5 +1,7 @@
 #include "track_selection.hpp"
 
+#include <algorithm>
+
 
 myDampeLib::DmpTrackSelector::DmpTrackSelector() 
 {
@@ -20,15 +22,27 @@ myDampeLib::DmpTrackSelector::DmpTrackSelector(const char * file) :
 } 
 
 void myDampeLib::DmpTrackSelector::addSelect(Select type){
-    switch (type) {
-        case stk_bad_channel :
-            readBadChannelsFile();
-            break;
-        case psd_match :
-        default :
-            break;
+    vector<Select>::iterator it;
+    it = find(mSelectTypes.begin(), mSelectTypes.end(), type);
+    if (it == mSelectTypes.end()) {   
+        switch (type) {
+            case stk_bad_channel :
+                readBadChannelsFile();
+                break;
+            case psd_match :
+            default :
+                break;
+        }
+        mSelectTypes.push_back(type);
     }
-    mSelectTypes.push_back(type);
+}
+
+void myDampeLib::DmpTrackSelector::removeSelect(Select type) {
+    vector<Select>::iterator it;
+    it = find(mSelectTypes.begin(), mSelectTypes.end(), type);
+    if (it != mSelectTypes.end()) {
+        mSelectTypes.erase(it);
+    }
 }
 
 bool myDampeLib::DmpTrackSelector::selected(DmpStkTrack* track, DmpEvent * event) const {

@@ -42,13 +42,18 @@ namespace myDampeLib {
                     psd_match
                     };
 
-        void setSelectTypes(vector<Select> type) {mSelectTypes = type;}
+        void setSelectTypes(vector<Select> types) {mSelectTypes = types;}
         vector<Select> selectTypes() const {return mSelectTypes;}
 
         /**
          * Add selection criterium
          */
         void addSelect(Select type);
+
+        /**
+         * Remove selection criterium
+         */
+        void removeSelect(Select type);
 
         /**
          * Returns true, if the track is selected.
