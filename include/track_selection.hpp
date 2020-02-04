@@ -4,6 +4,7 @@
 #include <iostream>
 #include <sstream>
 #include <vector>
+#include <string>
 
 #include "TClonesArray.h"
 
@@ -14,7 +15,6 @@
 #include "DmpStkTrackHelper.h"
 #include "DmpSvcPsdEposCor.h"
 #include "DmpStkTrack.h"
-#include "DmpEvent.h"
 #include "DmpEvtPsdRec.h"
 
 #define NLADDERS     192
@@ -43,9 +43,9 @@ public:
 
     enum Select{stk_bad_channel,
                 psd_match
-                }
+                };
 
-    void setSelectTypes(vector<Select> type) {mSelectTypes = types;}
+    void setSelectTypes(vector<Select> type) {mSelectTypes = type;}
     vector<Select> selectTypes() const {return mSelectTypes;}
 
     /**
@@ -69,11 +69,11 @@ private:
     vector<Select> mSelectTypes;
 
     // Bad channel check
-    vector<vector<bool>> mBadChannelList;
-    char * mBadChannelsFile;
+    vector<vector<bool> > mBadChannelList;
+    string mBadChannelsFile;
     void readBadChannelsFile();
-    bool hasBadChannel(DmpStkTrack * track) const;
+    bool hasBadChannel(DmpStkTrack * track, DmpEvent * event) const;
 
     // PSD match
-    bool psdMatch(DmpStkTrack * tracl, DmpEvent * event) const;
-}
+    bool psdMatch(DmpStkTrack * track, DmpEvent * event) const;
+};

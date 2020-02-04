@@ -6,7 +6,7 @@ DmpTrackSelector::DmpTrackSelector()
     mSelectTypes.resize(0);
 
     mBadChannelList.resize(NLADDERS);
-    for (vector<vector<bool>>::iterator it = mBadChannelList.begin();
+    for (vector<vector<bool> >::iterator it = mBadChannelList.begin();
          it != mBadChannelList.end();
          ++it) {
         it->resize(NCHANNELS);
@@ -22,38 +22,39 @@ DmpTrackSelector::DmpTrackSelector(const char * file) :
 void DmpTrackSelector::addSelect(Select type){
     switch (type) {
         case stk_bad_channel :
-            readBadChannelsFile(mBadChannelsFile);
+            readBadChannelsFile();
             break;
         case psd_match :
         default :
             break;
     }
-    mSelectTypes.push_bash type;
+    mSelectTypes.push_back(type);
 }
 
-bool DmpTrackSelector::selected(DmpStkTrack* track) const {
-    for (vector<Select>::iterator it = mSelectTypes.begin();
+bool DmpTrackSelector::selected(DmpStkTrack* track, DmpEvent * event) const {
+    for (vector<Select>::const_iterator it = mSelectTypes.begin();
          it != mSelectTypes.end(); 
          ++it) {
-        if(!pass(track, *it)) return false;
+        if(!pass(track, event, *it)) return false;
     }
-    return true
+    return true;
 }
 
 bool DmpTrackSelector::pass(DmpStkTrack * track, DmpEvent * event, Select type) const {
     switch (type) {
         case stk_bad_channel :
-            return hasBadChannel(track);
+            return hasBadChannel(track, event);
             break;
-        case psdMatch :
-            return psdMatch(track);
+        case psd_match :
+            return psdMatch(track, event);
+	    break;
         default :
             return true;
     }
 }
 
 void DmpTrackSelector::readBadChannelsFile() {
-    ifstream infile(mBadChannelsFile);  
+    ifstream infile(mBadChannelsFile.c_str());  
     if (!infile)
     {
         std::cout << "Can't open Bad Channels file: " << mBadChannelsFile;
@@ -85,15 +86,17 @@ void DmpTrackSelector::readBadChannelsFile() {
     }
 }
 
-bool DmpTrackSelector::hasBadChannel(DmpStkTrack * track) const{
+bool DmpTrackSelector::hasBadChannel(DmpStkTrack * track, DmpEvent * pev) const{
+    TClonesArray * stkclusters = pev->GetStkSiClusterCollection();
+
     // Loop over clusters
-    for (int ipoint=0; ipoint<stktrack->GetNPoints(); ipoint++) {
+    for (int ipoint=0; ipoint<track->GetNPoints(); ipoint++) {
         for (int ixy=0; ixy<2; ixy++) {
             DmpStkSiCluster* cluster;
             if(ixy == 0)
-                cluster = stktrack -> GetClusterX(ipoint, stkclusters);
+                cluster = track -> GetClusterX(ipoint, stkclusters);
             else
-                cluster = stktrack -> GetClusterY(ipoint, stkclusters);
+                cluster = track -> GetClusterY(ipoint, stkclusters);
             if(!cluster) continue;
 
             //ladder num
@@ -113,13 +116,13 @@ bool DmpTrackSelector::hasBadChannel(DmpStkTrack * track) const{
     return false;
 }
 
-bool DmpTrackSelector::psdMatch(DmpStkTrack * tracl, DmpEvent * event) const {
-    DmpEvtPsdRec *psdRec = pev->pEvtPsdRec();
+bool DmpTrackSelector::psdMatch(DmpStkTrack * track, DmpEvent * event) const {
+    DmpEvtPsdRec *psdRec = event->pEvtPsdRec();
 
-    TVector3 impact = stktrack->getImpactPoint();
-    TVector3 direction = stktrack->getDirection();
+    TVector3 impact = track->getImpactPoint();
+    TVector3 direction = track->getDirection();
 
-    bool mc = (pev->pEvtSimuHeader() != nullptr);
+    bool mc = (event->pEvtSimuHeader() != nullptr);
 
     // Loop over psd layers
     for (int ilayer = 0; ilayer < NPSDLAYERS; ilayer++) {
