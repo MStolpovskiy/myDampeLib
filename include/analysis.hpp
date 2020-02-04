@@ -68,6 +68,16 @@ namespace myDampeLib {
         void openOutputFile(string option="RECREATE");
         void closeOutputFile();
 
+        /*
+        Main loop over the events
+        */
+        void run(int n=-1);
+
+        /*
+        The virtual function to redefine
+        */
+        virtual void analyseOneEvent();
+
     private:
         string mOutputFilename;
         TFile * mOutputFile;
