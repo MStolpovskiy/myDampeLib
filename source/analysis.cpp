@@ -1,7 +1,7 @@
 #include "analysis.hpp"
 
 myDampeLib::DmpAnalysis::DmpAnalysis():
-    DmpAnalysis("")
+    DmpAnalysis("default.root")
 {
 }
 
@@ -13,23 +13,17 @@ myDampeLib::DmpAnalysis::DmpAnalysis(const char * filename) :
 myDampeLib::DmpAnalysis::DmpAnalysis(string filename) :
     mOutputFilename(filename)
 {
+    openOutputFile(mOutputFilename);
 }
 
 myDampeLib::DmpAnalysis::~DmpAnalysis()
 {
-    if (mOutputFile) {
-        closeOutputFile();
-    }
+    closeOutputFile();
 }
 
 void myDampeLib::DmpAnalysis::openOutputFile(string option/*="RECREATE"*/)
 {
-    if (mOutputFilename != "") {
-        mOutputFile = new TFile(mOutputFilename.c_str(), option.c_str());
-    }
-    else {
-        std::cout << "mOuputFilename is not defined" << std::endl;
-    }
+    mOutputFile = new TFile(mOutputFilename.c_str(), option.c_str());
 }
 
 void myDampeLib::DmpAnalysis::closeOutputFile()
