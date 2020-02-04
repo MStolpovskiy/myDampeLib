@@ -55,11 +55,25 @@ namespace myDampeLib {
         void setOutputFilename(string filename) {mOutputFilename = filename;}
         string outputFilename() const {return mOutputFilename;}
 
+        /*
+        Set TChain of the input files from a list.txt file
+        */
+        void setTChain(const char * filename, bool verbose=true);
+
+        /*
+        Add an element to the TChain of the input files
+        */
+        void add2TChain(string filename, bool verbose=true)
+
         void openOutputFile(string option="RECREATE");
         void closeOutputFile();
 
     private:
         string mOutputFilename;
         TFile * mOutputFile;
+
+        TChain * mChain;
+        int mNFilesChained;
+        int mNEvents;
     };
 }
