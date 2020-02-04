@@ -82,7 +82,7 @@ namespace myDampeLib {
         string mOutputFilename;
         TFile * mOutputFile;
 
-        TChain * mChain;
+        DmpChain * mChain;
         int mNFilesChained;
         int mNEvents;
     };
