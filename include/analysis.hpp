@@ -78,7 +78,7 @@ namespace myDampeLib {
         */
         virtual void analyseOneEvent();
 
-    private:
+    protected:
         string mOutputFilename;
         TFile * mOutputFile;
 
