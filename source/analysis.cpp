@@ -22,7 +22,7 @@ myDampeLib::DmpAnalysis::~DmpAnalysis()
     }
 }
 
-void myDampeLib::DmpAnalysis::openOutputFile(string option="RECREATE")
+void myDampeLib::DmpAnalysis::openOutputFile(string option/*="RECREATE"*/)
 {
     if (mOutputFilename != "") {
         mOutputFile = new TFile(mOutputFilename.c_str(), option.c_str());
@@ -34,5 +34,5 @@ void myDampeLib::DmpAnalysis::openOutputFile(string option="RECREATE")
 
 void myDampeLib::DmpAnalysis::closeOutputFile()
 {
-    mOutputFile.Close();
+    mOutputFile->Close();
 }
