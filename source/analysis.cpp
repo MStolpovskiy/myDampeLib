@@ -32,7 +32,7 @@ void myDampeLib::DmpAnalysis::closeOutputFile()
     mOutputFile->Close();
 }
 
-void myDampeLib::sDmpAnalysis::etTChain(const char * filename, bool verbose/*=true*/)
+void myDampeLib::DmpAnalysis::setTChain(const char * filename, bool verbose/*=true*/)
 {
     mChain = new DmpChain("CollectionTree");
     ifstream runlist(filename);
