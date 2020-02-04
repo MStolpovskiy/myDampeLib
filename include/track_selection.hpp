@@ -30,50 +30,48 @@
 #define MINCHISQ     6.0
 #define CHI2KALMANCUT 5.
 
+namespace myDampeLib {
 
-bool** read_bad_channels_file(const char* filename);
-bool is_cluster_bad_channel(DmpStkSiCluster * cluster, bool** badchannels);
-int reaction_in_psd(DmpStkTrackHelper * stk_helper, DmpEvtPsdRec *psdRec, bool mc=false);
+    class DmpTrackSelector {
+    public:
+        DmpTrackSelector();
+        DmpTrackSelector(const char * file);
+        ~DmpTrackSelector();
 
-class DmpTrackSelector {
-public:
-    DmpTrackSelector();
-    DmpTrackSelector(const char * file);
-    ~DmpTrackSelector();
+        enum Select{stk_bad_channel,
+                    psd_match
+                    };
 
-    enum Select{stk_bad_channel,
-                psd_match
-                };
+        void setSelectTypes(vector<Select> type) {mSelectTypes = type;}
+        vector<Select> selectTypes() const {return mSelectTypes;}
 
-    void setSelectTypes(vector<Select> type) {mSelectTypes = type;}
-    vector<Select> selectTypes() const {return mSelectTypes;}
+        /**
+         * Add selection criterium
+         */
+        void addSelect(Select type);
 
-    /**
-     * Add selection criterium
-     */
-    void addSelect(Select type);
+        /**
+         * Returns true, if the track is selected.
+         * event is the DmpEvent object, that contains the track
+         */    
+        bool selected(DmpStkTrack * track, DmpEvent * event) const;
 
-    /**
-     * Returns true, if the track is selected.
-     * event is the DmpEvent object, that contains the track
-     */    
-    bool selected(DmpStkTrack * track, DmpEvent * event) const;
+        /**
+         * Returns true, if the track passes the type selection
+         * event is the DmpEvent object, that contains the track
+         */    
+        bool pass(DmpStkTrack * track, DmpEvent * event, Select type) const;
 
-    /**
-     * Returns true, if the track passes the type selection
-     * event is the DmpEvent object, that contains the track
-     */    
-    bool pass(DmpStkTrack * track, DmpEvent * event, Select type) const;
+    private:
+        vector<Select> mSelectTypes;
 
-private:
-    vector<Select> mSelectTypes;
+        // Bad channel check
+        vector<vector<bool> > mBadChannelList;
+        string mBadChannelsFile;
+        void readBadChannelsFile();
+        bool hasBadChannel(DmpStkTrack * track, DmpEvent * event) const;
 
-    // Bad channel check
-    vector<vector<bool> > mBadChannelList;
-    string mBadChannelsFile;
-    void readBadChannelsFile();
-    bool hasBadChannel(DmpStkTrack * track, DmpEvent * event) const;
-
-    // PSD match
-    bool psdMatch(DmpStkTrack * track, DmpEvent * event) const;
-};
+        // PSD match
+        bool psdMatch(DmpStkTrack * track, DmpEvent * event) const;
+    };
+}

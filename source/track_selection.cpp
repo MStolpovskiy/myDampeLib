@@ -1,7 +1,7 @@
 #include "track_selection.hpp"
 
 
-DmpTrackSelector::DmpTrackSelector() 
+myDampeLib::DmpTrackSelector::DmpTrackSelector() 
 {
     mSelectTypes.resize(0);
 
@@ -13,13 +13,13 @@ DmpTrackSelector::DmpTrackSelector()
     }
 }
 
-DmpTrackSelector::DmpTrackSelector(const char * file) :
+myDampeLib::DmpTrackSelector::DmpTrackSelector(const char * file) :
     DmpTrackSelector()
 {
     mBadChannelsFile = file;
 } 
 
-void DmpTrackSelector::addSelect(Select type){
+void myDampeLib::DmpTrackSelector::addSelect(Select type){
     switch (type) {
         case stk_bad_channel :
             readBadChannelsFile();
@@ -31,7 +31,7 @@ void DmpTrackSelector::addSelect(Select type){
     mSelectTypes.push_back(type);
 }
 
-bool DmpTrackSelector::selected(DmpStkTrack* track, DmpEvent * event) const {
+bool myDampeLib::DmpTrackSelector::selected(DmpStkTrack* track, DmpEvent * event) const {
     for (vector<Select>::const_iterator it = mSelectTypes.begin();
          it != mSelectTypes.end(); 
          ++it) {
@@ -40,7 +40,7 @@ bool DmpTrackSelector::selected(DmpStkTrack* track, DmpEvent * event) const {
     return true;
 }
 
-bool DmpTrackSelector::pass(DmpStkTrack * track, DmpEvent * event, Select type) const {
+bool myDampeLib::DmpTrackSelector::pass(DmpStkTrack * track, DmpEvent * event, Select type) const {
     switch (type) {
         case stk_bad_channel :
             return hasBadChannel(track, event);
@@ -53,7 +53,7 @@ bool DmpTrackSelector::pass(DmpStkTrack * track, DmpEvent * event, Select type) 
     }
 }
 
-void DmpTrackSelector::readBadChannelsFile() {
+void myDampeLib::DmpTrackSelector::readBadChannelsFile() {
     ifstream infile(mBadChannelsFile.c_str());  
     if (!infile)
     {
@@ -86,7 +86,7 @@ void DmpTrackSelector::readBadChannelsFile() {
     }
 }
 
-bool DmpTrackSelector::hasBadChannel(DmpStkTrack * track, DmpEvent * pev) const{
+bool myDampeLib::DmpTrackSelector::hasBadChannel(DmpStkTrack * track, DmpEvent * pev) const{
     TClonesArray * stkclusters = pev->GetStkSiClusterCollection();
 
     // Loop over clusters
@@ -116,7 +116,7 @@ bool DmpTrackSelector::hasBadChannel(DmpStkTrack * track, DmpEvent * pev) const{
     return false;
 }
 
-bool DmpTrackSelector::psdMatch(DmpStkTrack * track, DmpEvent * event) const {
+bool myDampeLib::DmpTrackSelector::psdMatch(DmpStkTrack * track, DmpEvent * event) const {
     DmpEvtPsdRec *psdRec = event->pEvtPsdRec();
 
     TVector3 impact = track->getImpactPoint();
