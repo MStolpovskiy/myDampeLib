@@ -63,7 +63,7 @@ namespace myDampeLib {
         /*
         Add an element to the TChain of the input files
         */
-        void add2TChain(string filename, bool verbose=true)
+        void add2TChain(string filename, bool verbose=true);
 
         void openOutputFile(string option="RECREATE");
         void closeOutputFile();

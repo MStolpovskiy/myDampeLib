@@ -32,7 +32,7 @@ void myDampeLib::DmpAnalysis::closeOutputFile()
     mOutputFile->Close();
 }
 
-void myDampeLib::setTChain(const char * filename, bool verbose/*=true*/)
+void myDampeLib::sDmpAnalysis::etTChain(const char * filename, bool verbose/*=true*/)
 {
     mChain = new DmpChain("CollectionTree");
     ifstream runlist(filename);
@@ -46,7 +46,7 @@ void myDampeLib::setTChain(const char * filename, bool verbose/*=true*/)
     runlist.close();
 }
 
-void myDampeLib::add2TChain(string filename, bool verbose/*=true*/)
+void myDampeLib::DmpAnalysis::add2TChain(string filename, bool verbose/*=true*/)
 {
     TFile * f = TFile::Open(filename.c_str(), "READ");
     if (f) {
