@@ -66,7 +66,8 @@ void myDampeLib::DmpAnalysis::add2TChain(string filename, bool verbose/*=true*/)
     mNEvents = mChain->GetEntries();
 }
 
-void myDampeLib::DmpAnalysis::addBranch(auto var)
+template <typename T>
+void myDampeLib::DmpAnalysis::addBranch(T var)
 {
     string type;
     switch (typeid(var).name()) {
@@ -81,7 +82,8 @@ void myDampeLib::DmpAnalysis::addBranch(auto var)
     mTree->Branch(GET_VARIABLE_NAME(var), &var, t.c_str());
 }
 
-void myDampeLib::DmpAnalysis::addBranch(auto var[])
+template <typename T>
+void myDampeLib::DmpAnalysis::addBranch(T var[])
 {
     string type;
     switch (typeid(var).name()) {

@@ -69,8 +69,10 @@ namespace myDampeLib {
         void closeOutputFile();
 
         virtual void addTTree() = 0;
-        void addBranch(auto var);
-        void addBranch(auto var[]);
+        template<typename T>
+        void addBranch(T var);
+        template<typename T>
+        void addBranch(T var[]);
 
         /*
         Main loop over the events
