@@ -65,7 +65,7 @@ void myDampeLib::DmpAnalysis::add2TChain(string filename, bool verbose/*=true*/)
 }
 
 template<typename T>
-void addBranch(T var)
+void myDampeLib::DmpAnalysis::addBranch(T var)
 {
     string type;
     if (typeid(var).name() == typeid(int).name())
@@ -77,12 +77,12 @@ void addBranch(T var)
     string t = string(GET_VARIABLE_NAME(var)) + type;
     mTree->Branch(GET_VARIABLE_NAME(var), &var, t.c_str());
 }
-template<> void addBranch(int);
-template<> void addBranch(float);
-template<> void addBranch(double);
+template<> void myDampeLib::DmpAnalysis::addBranch(int);
+template<> void myDampeLib::DmpAnalysis::addBranch(float);
+template<> void myDampeLib::DmpAnalysis::addBranch(double);
 
 template<typename T>
-void addBranch(T var[])
+void myDampeLib::DmpAnalysis::addBranch(T var[])
 {
     string type;
     if (typeid(var).name() == typeid(int).name())
@@ -95,9 +95,9 @@ void addBranch(T var[])
     string t = string(GET_VARIABLE_NAME(var)) + "[" + string(len) + "]" + type;
     mTree->Branch(GET_VARIABLE_NAME(var), &var, t.c_str());
 }
-template<> void addBranch(int[]);
-template<> void addBranch(float[]);
-template<> void addBranch(double[]);
+template<> void myDampeLib::DmpAnalysis::addBranch(int[]);
+template<> void myDampeLib::DmpAnalysis::addBranch(float[]);
+template<> void myDampeLib::DmpAnalysis::addBranch(double[]);
 
 void myDampeLib::DmpAnalysis::run(int n/*=-1*/)
 { 
