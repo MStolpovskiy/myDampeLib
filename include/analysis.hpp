@@ -40,6 +40,8 @@
 #include "track_selection.hpp"
 #include "etacorr.hpp"
 
+#define GET_VARIABLE_NAME(Variable) (void(Variable),#Variable)
+
 using namespace std;
 using namespace TMVA;
 
@@ -77,14 +79,12 @@ namespace myDampeLib {
         void addBranch(T var)
         {
             string type;
-            switch (typeid(var).name()) {
-                case typeid(int).name():
-                    type = "/I"; break;
-                case typeid(float).name():
-                    type = "/F"; break;
-                case typeid(double).name():
-                    type = "/D"; break;
-            }
+            if (typeid(var).name() == typeid(int).name())
+                type = "/I";
+            if (typeid(var).name() == typeid(float).name())
+                type = "/F";
+            if (typeid(var).name() == typeid(double).name())
+                type = "/D";
             string t = string(GET_VARIABLE_NAME(var)) + type;
             mTree->Branch(GET_VARIABLE_NAME(var), &var, t.c_str());
         }
@@ -96,14 +96,12 @@ namespace myDampeLib {
         void addBranch(T var[])
         {
             string type;
-            switch (typeid(var).name()) {
-                case typeid(int).name():
-                    type = "/I"; break;
-                case typeid(float).name():
-                    type = "/F"; break;
-                case typeid(double).name():
-                    type = "/D"; break;
-            }
+            if (typeid(var).name() == typeid(int).name())
+                type = "/I";
+            if (typeid(var).name() == typeid(float).name())
+                type = "/F";
+            if (typeid(var).name() == typeid(double).name())
+                type = "/D";
             int len = sizeof(var) / sizeof(*var);
             string t = string(GET_VARIABLE_NAME(var)) + "[" + string(len) + "]" + type;
             mTree->Branch(GET_VARIABLE_NAME(var), &var, t.c_str());
