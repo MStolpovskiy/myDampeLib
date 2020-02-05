@@ -78,9 +78,9 @@ void myDampeLib::DmpAnalysis::addBranch(T var)
     mTree->Branch(GET_VARIABLE_NAME(var), &var, t.c_str());
 }
 namespace myDampeLib{
-    template<> void DmpAnalysis::addBranch(int);
-    template<> void DmpAnalysis::addBranch(float);
-    template<> void DmpAnalysis::addBranch(double);
+    template<int> void DmpAnalysis::addBranch(int);
+    template<float> void DmpAnalysis::addBranch(float);
+    template<double> void DmpAnalysis::addBranch(double);
 }
 
 template<typename T>
@@ -98,9 +98,9 @@ void myDampeLib::DmpAnalysis::addBranch(T var[])
     mTree->Branch(GET_VARIABLE_NAME(var), &var, t.c_str());
 }
 namespace myDampeLib{
-    template<> void DmpAnalysis::addBranch(int[]);
-    template<> void DmpAnalysis::addBranch(float[]);
-    template<> void DmpAnalysis::addBranch(double[]);
+    template<int> void DmpAnalysis::addBranch(int[]);
+    template<float> void DmpAnalysis::addBranch(float[]);
+    template<double> void DmpAnalysis::addBranch(double[]);
 }
 
 void myDampeLib::DmpAnalysis::run(int n/*=-1*/)
