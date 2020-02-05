@@ -1,8 +1,6 @@
 #include "analysis.hpp"
 #include <string>
 
-#define GET_VARIABLE_NAME(Variable) (void(Variable),#Variable)
-
 myDampeLib::DmpAnalysis::DmpAnalysis():
     DmpAnalysis("default.root")
 {
@@ -88,19 +86,19 @@ void myDampeLib::DmpAnalysis::addBranch(double * var, string varname)
     mTree->Branch(varname.c_str(), var, t.c_str());
 }
 
-void myDampeLib::DmpAnalysis::addBranch(int * var, int len, string varname)
+void myDampeLib::DmpAnalysis::addBranch(int * var[], int len, string varname)
 {
     string t = varname + "[" + to_string(len) + "]/I";
     mTree->Branch(varname.c_str(), var, t.c_str());
 }
 
-void myDampeLib::DmpAnalysis::addBranch(float * var, int len, string varname)
+void myDampeLib::DmpAnalysis::addBranch(float * var[], int len, string varname)
 {
     string t = varname + "[" + to_string(len) + "]/F";
     mTree->Branch(varname.c_str(), var, t.c_str());
 }
 
-void myDampeLib::DmpAnalysis::addBranch(double * var, int len, string varname)
+void myDampeLib::DmpAnalysis::addBranch(double * var[], int len, string varname)
 {
     string t = varname + "[" + to_string(len) + "]/D";
     mTree->Branch(varname.c_str(), var, t.c_str());
