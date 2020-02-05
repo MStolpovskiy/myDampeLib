@@ -81,7 +81,7 @@ void myDampeLib::DmpAnalysis::addBranch(auto var)
     mTree->Branch(GET_VARIABLE_NAME(var), &var, t.c_str());
 }
 
-void myDampeLib::DmpAnalysis::addBranch(auto var[]);
+void myDampeLib::DmpAnalysis::addBranch(auto var[])
 {
     string type;
     switch (typeid(var).name()) {
@@ -110,5 +110,3 @@ void myDampeLib::DmpAnalysis::run(int n/*=-1*/)
         mTree -> Fill();
     }
 }
-
-void myDampeLib::DmpAnalysis::
