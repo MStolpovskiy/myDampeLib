@@ -5,27 +5,31 @@ myDampeLib::DmpAnalysis::DmpAnalysis():
 {
 }
 
-myDampeLib::DmpAnalysis::DmpAnalysis(const char * filename) :
-    DmpAnalysis(string(filename))
+myDampeLib::DmpAnalysis::DmpAnalysis(const char * filename, const char * option) :
+    DmpAnalysis(string(filename), string(option))
 {
 }
 
-myDampeLib::DmpAnalysis::DmpAnalysis(string filename) :
+myDampeLib::DmpAnalysis::DmpAnalysis(string filename, string option/*=RECREATE*/) :
     mOutputFilename(filename),
     mNFilesChained(0)
 {
-    openOutputFile(mOutputFilename);
+    openOutputFile(option);
 }
 
 myDampeLib::DmpAnalysis::~DmpAnalysis()
 {
     closeOutputFile();
-    delete mChain;
 }
 
 void myDampeLib::DmpAnalysis::openOutputFile(string option/*="RECREATE"*/)
 {
     mOutputFile = new TFile(mOutputFilename.c_str(), option.c_str());
+    if (mOutputFile -> IsZombie()) {
+        std::cout << "Error opening output file" << std::endl;
+        exit(-1);
+    }
+    std::cout << "Output file open " << mOutputFilename << std::endl;
 }
 
 void myDampeLib::DmpAnalysis::closeOutputFile()

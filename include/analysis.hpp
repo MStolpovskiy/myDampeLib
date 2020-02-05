@@ -47,8 +47,8 @@ namespace myDampeLib {
     class DmpAnalysis {
     public:
         DmpAnalysis();
-        DmpAnalysis(const char * filename);
-        DmpAnalysis(string filename);
+        DmpAnalysis(const char * filename, const char * option);
+        DmpAnalysis(string filename, string option="RECREATE");
         ~DmpAnalysis();
 
         void setOutputFilename(const char * filename) {mOutputFilename = filename;}
