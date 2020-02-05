@@ -70,46 +70,40 @@ void myDampeLib::DmpAnalysis::add2TChain(string filename, bool verbose/*=true*/)
     mNEvents = mChain->GetEntries();
 }
 
-void myDampeLib::DmpAnalysis::addBranch(int var, string varname)
+void myDampeLib::DmpAnalysis::addBranch(int * var, string varname)
 {
     string t = varname + "/I";
-    mTree->Branch(varname.c_str(), &var, t.c_str());
+    mTree->Branch(varname.c_str(), var, t.c_str());
 }
 
-void myDampeLib::DmpAnalysis::addBranch(float var, string varname)
+void myDampeLib::DmpAnalysis::addBranch(float * var, string varname)
 {
     string t = varname + "/F";
-    mTree->Branch(varname.c_str(), &var, t.c_str());
+    mTree->Branch(varname.c_str(), var, t.c_str());
 }
 
-void myDampeLib::DmpAnalysis::addBranch(double var, string varname)
+void myDampeLib::DmpAnalysis::addBranch(double * var, string varname)
 {
     string t = varname + "/D";
-    mTree->Branch(varname.c_str(), &var, t.c_str());
+    mTree->Branch(varname.c_str(), var, t.c_str());
 }
 
-void myDampeLib::DmpAnalysis::addBranch(int var[], string varname)
+void myDampeLib::DmpAnalysis::addBranch(int * var, int len, string varname)
 {
-    int len = sizeof(var) / sizeof(*var);
-    string lenStr = to_string(len);
-    string t = varname + "[" + lenStr + "]/I";
-    mTree->Branch(varname.c_str(), &var, t.c_str());
+    string t = varname + "[" + to_string(len) + "]/I";
+    mTree->Branch(varname.c_str(), var, t.c_str());
 }
 
-void myDampeLib::DmpAnalysis::addBranch(float var[], string varname)
+void myDampeLib::DmpAnalysis::addBranch(float * var, int len, string varname)
 {
-    int len = sizeof(var) / sizeof(*var);
-    string lenStr = to_string(len);
-    string t = varname + "[" + lenStr + "]/F";
-    mTree->Branch(varname.c_str(), &var, t.c_str());
+    string t = varname + "[" + to_string(len) + "]/F";
+    mTree->Branch(varname.c_str(), var, t.c_str());
 }
 
-void myDampeLib::DmpAnalysis::addBranch(double var[], string varname)
+void myDampeLib::DmpAnalysis::addBranch(double * var, int len, string varname)
 {
-    int len = sizeof(var) / sizeof(*var);
-    string lenStr = to_string(len);
-    string t = varname + "[" + lenStr + "]/D";
-    mTree->Branch(varname.c_str(), &var, t.c_str());
+    string t = varname + "[" + to_string(len) + "]/D";
+    mTree->Branch(varname.c_str(), var, t.c_str());
 }
 
 void myDampeLib::DmpAnalysis::run(int n/*=-1*/)
