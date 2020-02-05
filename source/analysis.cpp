@@ -1,11 +1,6 @@
 #include "analysis.hpp"
 
-#define NAME2STR(var) name2str(#name)
-
-string name2str(const char * name)
-{
-    return string(name);
-}
+#define GET_VARIABLE_NAME(Variable) (#Variable)
 
 myDampeLib::DmpAnalysis::DmpAnalysis():
     DmpAnalysis("default.root")
@@ -82,8 +77,8 @@ void myDampeLib::DmpAnalysis::addBranch(auto var)
         case typeid(double).name():
             type = "/D"; break;
     }
-    string t = NAME2STR(var) + type;
-    mTree->Branch(NAME2STR(var), &var, t.c_str());
+    string t = string(GET_VARIABLE_NAME(var)) + type;
+    mTree->Branch(GET_VARIABLE_NAME(var), &var, t.c_str());
 }
 
 void myDampeLib::DmpAnalysis::addBranch(auto var[]);
@@ -98,8 +93,8 @@ void myDampeLib::DmpAnalysis::addBranch(auto var[]);
             type = "/D"; break;
     }
     int len = sizeof(var) / sizeof(*var);
-    string t = NAME2STR(var) + "[" + string(len) + "]" + type;
-    mTree->Branch(NAME2STR(var), &var, t.c_str());
+    string t = string(GET_VARIABLE_NAME(var)) + "[" + string(len) + "]" + type;
+    mTree->Branch(GET_VARIABLE_NAME(var), &var, t.c_str());
 }
 
 void myDampeLib::DmpAnalysis::run(int n/*=-1*/)
