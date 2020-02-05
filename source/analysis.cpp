@@ -20,6 +20,7 @@ myDampeLib::DmpAnalysis::DmpAnalysis(string filename) :
 myDampeLib::DmpAnalysis::~DmpAnalysis()
 {
     closeOutputFile();
+    delete mChain;
 }
 
 void myDampeLib::DmpAnalysis::openOutputFile(string option/*="RECREATE"*/)
@@ -31,7 +32,6 @@ void myDampeLib::DmpAnalysis::closeOutputFile()
 {
     mOutputFile->Close();
     delete mOutputFile;
-    delete mChain;
 }
 
 void myDampeLib::DmpAnalysis::setTChain(const char * filename, bool verbose/*=true*/)
