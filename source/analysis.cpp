@@ -1,4 +1,5 @@
 #include "analysis.hpp"
+#include <stdlib.h>
 
 #define GET_VARIABLE_NAME(Variable) (void(Variable),#Variable)
 
