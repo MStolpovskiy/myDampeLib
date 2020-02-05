@@ -87,21 +87,24 @@ void myDampeLib::DmpAnalysis::addBranch(double var)
 void myDampeLib::DmpAnalysis::addBranch(int var[])
 {
     int len = sizeof(var) / sizeof(*var);
-    string t = string(GET_VARIABLE_NAME(var)) + "[" + string(len) + "]/I";
+    char * lenStr = itoa(len)
+    string t = string(GET_VARIABLE_NAME(var)) + "[" + lenStr + "]/I";
     mTree->Branch(GET_VARIABLE_NAME(var), &var, t.c_str());
 }
 
 void myDampeLib::DmpAnalysis::addBranch(float var[])
 {
     int len = sizeof(var) / sizeof(*var);
-    string t = string(GET_VARIABLE_NAME(var)) + "[" + string(len) + "]/F";
+    char * lenStr = itoa(len)
+    string t = string(GET_VARIABLE_NAME(var)) + "[" + lenStr + "]/F";
     mTree->Branch(GET_VARIABLE_NAME(var), &var, t.c_str());
 }
 
 void myDampeLib::DmpAnalysis::addBranch(double var[])
 {
     int len = sizeof(var) / sizeof(*var);
-    string t = string(GET_VARIABLE_NAME(var)) + "[" + string(len) + "]/D";
+    char * lenStr = itoa(len)
+    string t = string(GET_VARIABLE_NAME(var)) + "[" + lenStr + "]/D";
     mTree->Branch(GET_VARIABLE_NAME(var), &var, t.c_str());
 }
 
