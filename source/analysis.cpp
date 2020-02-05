@@ -37,7 +37,9 @@ void myDampeLib::DmpAnalysis::openOutputFile(string option/*="RECREATE"*/)
 
 void myDampeLib::DmpAnalysis::closeOutputFile()
 {
-    mOutputFile->Write();
+    mOutputFile->cd();
+    mTree->Write();
+    // mOutputFile->Write();
     mOutputFile->Close();
     // delete mOutputFile;
 }
@@ -119,7 +121,7 @@ void myDampeLib::DmpAnalysis::run(int n/*=-1*/)
             cout << "Processing percentage: " << percentage << "% \n";
         }
 
-        analyseOneEvent();
+        this->analyseOneEvent();
         mTree -> Fill();
     }
 }
