@@ -68,6 +68,11 @@ void myDampeLib::DmpAnalysis::add2TChain(string filename, bool verbose/*=true*/)
     mNEvents = mChain->GetEntries();
 }
 
+void myDampeLib::DmpAnalysis::openTTree(const char * treename)
+{
+    mTree = (TTree*)f->Get(treename);
+}
+
 void myDampeLib::DmpAnalysis::addBranch(int * var, string varname)
 {
     string t = varname + "/I";

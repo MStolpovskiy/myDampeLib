@@ -69,7 +69,18 @@ namespace myDampeLib {
         void openOutputFile(string option="RECREATE");
         void closeOutputFile();
 
+        /*
+        Function to redefine in the user analysis
+        Here you create the tree and
+        add the branches (use addBranch)
+        */
         virtual void addTTree() = 0;
+
+        /*
+        Open already existing tree
+        from a previously created file
+        */
+        void openTTree(const char * treename);
 
         /*
         Add branch to the tree
