@@ -37,6 +37,7 @@ void myDampeLib::DmpAnalysis::openOutputFile(string option/*="RECREATE"*/)
 
 void myDampeLib::DmpAnalysis::closeOutputFile()
 {
+    mOutputFile->Write();
     mOutputFile->Close();
     // delete mOutputFile;
 }
