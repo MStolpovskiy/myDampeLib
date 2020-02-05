@@ -1,6 +1,6 @@
 #include "analysis.hpp"
 
-#define GET_VARIABLE_NAME(Variable) (#Variable)
+#define GET_VARIABLE_NAME(Variable) (void(Variable),#Variable)
 
 myDampeLib::DmpAnalysis::DmpAnalysis():
     DmpAnalysis("default.root")
