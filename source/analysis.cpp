@@ -121,7 +121,7 @@ void myDampeLib::DmpAnalysis::run(int n/*=-1*/)
             cout << "Processing percentage: " << percentage << "% \n";
         }
 
-        this->analyseOneEvent();
-        mTree -> Fill();
+        this -> analyseOneEvent();
+        this -> mTree -> Fill();
     }
 }
