@@ -19,7 +19,7 @@ endif
 
 #------------------------------------------------------------------------------
 
-CXXFLAGS += -Wextra -Wshadow -Wnon-virtual-dtor -pedantic
+CXXFLAGS += -std=c++14 -Wextra -Wshadow -Wnon-virtual-dtor -pedantic
 CXXFLAGS += -I $(DMPSWSYS)/include
 CXXFLAGS += -I include
 

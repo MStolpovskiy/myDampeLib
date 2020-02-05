@@ -1,6 +1,11 @@
 #include "analysis.hpp"
 
-#define NAME2STR(var) #name
+#define NAME2STR(var) name2str(#name)
+
+string name2str(const char * name)
+{
+    return string(name);
+}
 
 myDampeLib::DmpAnalysis::DmpAnalysis():
     DmpAnalysis("default.root")
@@ -69,12 +74,12 @@ void myDampeLib::DmpAnalysis::add2TChain(string filename, bool verbose/*=true*/)
 void myDampeLib::DmpAnalysis::addBranch(auto var)
 {
     string type;
-    switch typeid(var) {
-        case int:
+    switch (typeid(var).name()) {
+        case typeid(int).name():
             type = "/I"; break;
-        case float:
+        case typeid(float).name():
             type = "/F"; break;
-        case double:
+        case typeid(double).name():
             type = "/D"; break;
     }
     string t = NAME2STR(var) + type;
@@ -84,12 +89,12 @@ void myDampeLib::DmpAnalysis::addBranch(auto var)
 void myDampeLib::DmpAnalysis::addBranch(auto var[]);
 {
     string type;
-    switch typeid(var) {
-        case int:
+    switch (typeid(var).name()) {
+        case typeid(int).name():
             type = "/I"; break;
-        case float:
+        case typeid(float).name():
             type = "/F"; break;
-        case double:
+        case typeid(double).name():
             type = "/D"; break;
     }
     int len = sizeof(var) / sizeof(*var);
