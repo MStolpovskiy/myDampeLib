@@ -66,39 +66,6 @@ void myDampeLib::DmpAnalysis::add2TChain(string filename, bool verbose/*=true*/)
     mNEvents = mChain->GetEntries();
 }
 
-template <typename T>
-void myDampeLib::DmpAnalysis::addBranch(T var)
-{
-    string type;
-    switch (typeid(var).name()) {
-        case typeid(int).name():
-            type = "/I"; break;
-        case typeid(float).name():
-            type = "/F"; break;
-        case typeid(double).name():
-            type = "/D"; break;
-    }
-    string t = string(GET_VARIABLE_NAME(var)) + type;
-    mTree->Branch(GET_VARIABLE_NAME(var), &var, t.c_str());
-}
-
-template <typename T>
-void myDampeLib::DmpAnalysis::addBranch(T var[])
-{
-    string type;
-    switch (typeid(var).name()) {
-        case typeid(int).name():
-            type = "/I"; break;
-        case typeid(float).name():
-            type = "/F"; break;
-        case typeid(double).name():
-            type = "/D"; break;
-    }
-    int len = sizeof(var) / sizeof(*var);
-    string t = string(GET_VARIABLE_NAME(var)) + "[" + string(len) + "]" + type;
-    mTree->Branch(GET_VARIABLE_NAME(var), &var, t.c_str());
-}
-
 void myDampeLib::DmpAnalysis::run(int n/*=-1*/)
 { 
     int nnn = (n < 0)? mNEvents : n;

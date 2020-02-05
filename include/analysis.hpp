@@ -69,10 +69,45 @@ namespace myDampeLib {
         void closeOutputFile();
 
         virtual void addTTree() = 0;
+
+        /*
+        Add branch to the tree
+        */
         template<typename T>
-        void addBranch(T var);
+        void addBranch(T var)
+        {
+            string type;
+            switch (typeid(var).name()) {
+                case typeid(int).name():
+                    type = "/I"; break;
+                case typeid(float).name():
+                    type = "/F"; break;
+                case typeid(double).name():
+                    type = "/D"; break;
+            }
+            string t = string(GET_VARIABLE_NAME(var)) + type;
+            mTree->Branch(GET_VARIABLE_NAME(var), &var, t.c_str());
+        }
+
+        /*
+        Add branch to the tree
+        */
         template<typename T>
-        void addBranch(T var[]);
+        void addBranch(T var[])
+        {
+            string type;
+            switch (typeid(var).name()) {
+                case typeid(int).name():
+                    type = "/I"; break;
+                case typeid(float).name():
+                    type = "/F"; break;
+                case typeid(double).name():
+                    type = "/D"; break;
+            }
+            int len = sizeof(var) / sizeof(*var);
+            string t = string(GET_VARIABLE_NAME(var)) + "[" + string(len) + "]" + type;
+            mTree->Branch(GET_VARIABLE_NAME(var), &var, t.c_str());
+        }
 
         /*
         Main loop over the events
