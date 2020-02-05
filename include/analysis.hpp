@@ -68,6 +68,10 @@ namespace myDampeLib {
         void openOutputFile(string option="RECREATE");
         void closeOutputFile();
 
+        virtual void addTTree() = 0;
+        void addBranch(auto var);
+        void addBranch(auto var[]);
+
         /*
         Main loop over the events
         if n < 0, analyse all the events
@@ -87,5 +91,9 @@ namespace myDampeLib {
         DmpChain * mChain;
         int mNFilesChained;
         int mNEvents;
+
+        int mCurrentEvent;
+
+        TTree * mTree;
     };
 }
