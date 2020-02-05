@@ -40,7 +40,6 @@
 #include "track_selection.hpp"
 #include "etacorr.hpp"
 
-#define GET_VARIABLE_NAME(Variable) (void(Variable),#Variable)
 
 using namespace std;
 using namespace TMVA;
@@ -75,14 +74,16 @@ namespace myDampeLib {
         /*
         Add branch to the tree
         */
-        template<typename T>
-        void addBranch(T var);
+        void addBranch(int var);
+        void addBranch(float var);
+        void addBranch(double var);
 
         /*
         Add branch to the tree
         */
-        template<typename T>
-        void addBranch(T var[]);
+        void addBranch(int var[]);
+        void addBranch(float var[]);
+        void addBranch(double var[]);
 
         /*
         Main loop over the events

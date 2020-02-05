@@ -1,5 +1,7 @@
 #include "analysis.hpp"
 
+#define GET_VARIABLE_NAME(Variable) (void(Variable),#Variable)
+
 myDampeLib::DmpAnalysis::DmpAnalysis():
     DmpAnalysis("default.root")
 {
@@ -64,43 +66,43 @@ void myDampeLib::DmpAnalysis::add2TChain(string filename, bool verbose/*=true*/)
     mNEvents = mChain->GetEntries();
 }
 
-template<typename T>
-void myDampeLib::DmpAnalysis::addBranch(T var)
+void myDampeLib::DmpAnalysis::addBranch(int var)
 {
-    string type;
-    if (typeid(var).name() == typeid(int).name())
-        type = "/I";
-    if (typeid(var).name() == typeid(float).name())
-        type = "/F";
-    if (typeid(var).name() == typeid(double).name())
-        type = "/D";
-    string t = string(GET_VARIABLE_NAME(var)) + type;
+    string t = string(GET_VARIABLE_NAME(var)) + "/I";
     mTree->Branch(GET_VARIABLE_NAME(var), &var, t.c_str());
-}
-namespace myDampeLib{
-    template<> void DmpAnalysis::addBranch(int);
-    template<> void DmpAnalysis::addBranch(float);
-    template<> void DmpAnalysis::addBranch(double);
 }
 
-template<typename T>
-void myDampeLib::DmpAnalysis::addBranch(T var[])
+void myDampeLib::DmpAnalysis::addBranch(float var)
 {
-    string type;
-    if (typeid(var).name() == typeid(int).name())
-        type = "/I";
-    if (typeid(var).name() == typeid(float).name())
-        type = "/F";
-    if (typeid(var).name() == typeid(double).name())
-        type = "/D";
-    int len = sizeof(var) / sizeof(*var);
-    string t = string(GET_VARIABLE_NAME(var)) + "[" + string(len) + "]" + type;
+    string t = string(GET_VARIABLE_NAME(var)) + "/F";
     mTree->Branch(GET_VARIABLE_NAME(var), &var, t.c_str());
 }
-namespace myDampeLib{
-    template<> void DmpAnalysis::addBranch(int[]);
-    template<> void DmpAnalysis::addBranch(float[]);
-    template<> void DmpAnalysis::addBranch(double[]);
+
+void myDampeLib::DmpAnalysis::addBranch(double var)
+{
+    string t = string(GET_VARIABLE_NAME(var)) + "/D";
+    mTree->Branch(GET_VARIABLE_NAME(var), &var, t.c_str());
+}
+
+void myDampeLib::DmpAnalysis::addBranch(int var[])
+{
+    int len = sizeof(var) / sizeof(*var);
+    string t = string(GET_VARIABLE_NAME(var)) + "[" + string(len) + "]/I";
+    mTree->Branch(GET_VARIABLE_NAME(var), &var, t.c_str());
+}
+
+void myDampeLib::DmpAnalysis::addBranch(float var[])
+{
+    int len = sizeof(var) / sizeof(*var);
+    string t = string(GET_VARIABLE_NAME(var)) + "[" + string(len) + "]/F";
+    mTree->Branch(GET_VARIABLE_NAME(var), &var, t.c_str());
+}
+
+void myDampeLib::DmpAnalysis::addBranch(double var[])
+{
+    int len = sizeof(var) / sizeof(*var);
+    string t = string(GET_VARIABLE_NAME(var)) + "[" + string(len) + "]/D";
+    mTree->Branch(GET_VARIABLE_NAME(var), &var, t.c_str());
 }
 
 void myDampeLib::DmpAnalysis::run(int n/*=-1*/)
