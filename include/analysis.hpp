@@ -74,16 +74,16 @@ namespace myDampeLib {
         /*
         Add branch to the tree
         */
-        void addBranch(int var);
-        void addBranch(float var);
-        void addBranch(double var);
+        void addBranch(int var, string varname);
+        void addBranch(float var, string varname);
+        void addBranch(double var, string varname);
 
         /*
         Add branch to the tree
         */
-        void addBranch(int var[]);
-        void addBranch(float var[]);
-        void addBranch(double var[]);
+        void addBranch(int var[], string varname);
+        void addBranch(float var[], string varname);
+        void addBranch(double var[], string varname);
 
         /*
         Main loop over the events

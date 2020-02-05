@@ -70,46 +70,46 @@ void myDampeLib::DmpAnalysis::add2TChain(string filename, bool verbose/*=true*/)
     mNEvents = mChain->GetEntries();
 }
 
-void myDampeLib::DmpAnalysis::addBranch(int var)
+void myDampeLib::DmpAnalysis::addBranch(int var, string varname)
 {
-    string t = string(GET_VARIABLE_NAME(var)) + "/I";
-    mTree->Branch(GET_VARIABLE_NAME(var), &var, t.c_str());
+    string t = varname + "/I";
+    mTree->Branch(varname.c_str(), &var, t.c_str());
 }
 
-void myDampeLib::DmpAnalysis::addBranch(float var)
+void myDampeLib::DmpAnalysis::addBranch(float var, string varname)
 {
-    string t = string(GET_VARIABLE_NAME(var)) + "/F";
-    mTree->Branch(GET_VARIABLE_NAME(var), &var, t.c_str());
+    string t = varname + "/F";
+    mTree->Branch(varname.c_str(), &var, t.c_str());
 }
 
-void myDampeLib::DmpAnalysis::addBranch(double var)
+void myDampeLib::DmpAnalysis::addBranch(double var, string varname)
 {
-    string t = string(GET_VARIABLE_NAME(var)) + "/D";
-    mTree->Branch(GET_VARIABLE_NAME(var), &var, t.c_str());
+    string t = varname + "/D";
+    mTree->Branch(varname.c_str(), &var, t.c_str());
 }
 
-void myDampeLib::DmpAnalysis::addBranch(int var[])
+void myDampeLib::DmpAnalysis::addBranch(int var[], string varname)
 {
     int len = sizeof(var) / sizeof(*var);
     string lenStr = to_string(len);
-    string t = string(GET_VARIABLE_NAME(var)) + "[" + lenStr + "]/I";
-    mTree->Branch(GET_VARIABLE_NAME(var), &var, t.c_str());
+    string t = varname + "[" + lenStr + "]/I";
+    mTree->Branch(varname.c_str(), &var, t.c_str());
 }
 
-void myDampeLib::DmpAnalysis::addBranch(float var[])
+void myDampeLib::DmpAnalysis::addBranch(float var[], string varname)
 {
     int len = sizeof(var) / sizeof(*var);
     string lenStr = to_string(len);
-    string t = string(GET_VARIABLE_NAME(var)) + "[" + lenStr + "]/F";
-    mTree->Branch(GET_VARIABLE_NAME(var), &var, t.c_str());
+    string t = varname + "[" + lenStr + "]/F";
+    mTree->Branch(varname.c_str(), &var, t.c_str());
 }
 
-void myDampeLib::DmpAnalysis::addBranch(double var[])
+void myDampeLib::DmpAnalysis::addBranch(double var[], string varname)
 {
     int len = sizeof(var) / sizeof(*var);
     string lenStr = to_string(len);
-    string t = string(GET_VARIABLE_NAME(var)) + "[" + lenStr + "]/D";
-    mTree->Branch(GET_VARIABLE_NAME(var), &var, t.c_str());
+    string t = varname + "[" + lenStr + "]/D";
+    mTree->Branch(varname.c_str(), &var, t.c_str());
 }
 
 void myDampeLib::DmpAnalysis::run(int n/*=-1*/)
