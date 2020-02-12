@@ -85,7 +85,7 @@ void myDampeLib::DmpAnalysis::run(int n/*=-1*/)
             cout << "Processing percentage: " << percentage << "% \n";
         }
 
-        mSelected = True;
+        mSelected = true;
         this -> analyseOneEvent();
         if (mSelected)
             this -> mTree -> Fill();
