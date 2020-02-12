@@ -107,6 +107,8 @@ namespace myDampeLib {
 
         int mCurrentEvent;
 
+        bool mSelected;
+
         TTree * mTree;
 	TTree * mTreeCopy;
     };

@@ -77,7 +77,7 @@ void myDampeLib::DmpAnalysis::openTTree(const char * filename, const char * tree
 }
 
 void myDampeLib::DmpAnalysis::run(int n/*=-1*/)
-{ 
+{
     int nnn = (n < 0)? mNEvents : n;
     for(mCurrentEvent = 0; mCurrentEvent < nnn; mCurrentEvent++) {
         if ((mCurrentEvent % (nnn / 10 + 1)) == int(nnn / 10)) {
@@ -85,7 +85,9 @@ void myDampeLib::DmpAnalysis::run(int n/*=-1*/)
             cout << "Processing percentage: " << percentage << "% \n";
         }
 
+        mSelected = True;
         this -> analyseOneEvent();
-        this -> mTree -> Fill();
+        if (mSelected)
+            this -> mTree -> Fill();
     }
 }
