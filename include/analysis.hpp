@@ -50,7 +50,7 @@ namespace myDampeLib {
         DmpAnalysis();
         DmpAnalysis(const char * filename, const char * option);
         DmpAnalysis(string filename, string option="RECREATE");
-        ~DmpAnalysis();
+        virtual ~DmpAnalysis() = 0;
 
         void setOutputFilename(const char * filename) {mOutputFilename = filename;}
         void setOutputFilename(string filename) {mOutputFilename = filename;}
@@ -77,24 +77,10 @@ namespace myDampeLib {
         virtual void addTTree() = 0;
 
         /*
-        Open already existing tree
-        from a previously created file
+        Open already existing tree from a previously created file
+	Copy the data from that tree to the output file
         */
-        void openTTree(const char * treename);
-
-        /*
-        Add branch to the tree
-        */
-        void addBranch(int * var, string varname);
-        void addBranch(float * var, string varname);
-        void addBranch(double * var, string varname);
-
-        /*
-        Add branch to the tree
-        */
-        void addBranch(int * var, int len, string varname);
-        void addBranch(float * var, int len, string varname);
-        void addBranch(double * var, int len, string varname);
+        void openTTree(const char * filename, const char * treename);
 
         /*
         Main loop over the events
@@ -119,5 +105,6 @@ namespace myDampeLib {
         int mCurrentEvent;
 
         TTree * mTree;
+	TTree * mTreeCopy;
     };
 }

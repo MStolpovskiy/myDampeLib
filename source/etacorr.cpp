@@ -84,6 +84,7 @@ void EtaCorr::fit_pr(TH2D * t_h){
 
 void EtaCorr::fit_pr_He(TH2D * t_h) {
     // this->fit_pr(t_h);
+
     m_nbinsx = t_h->GetNbinsX();
     m_mp_p.resize(m_nbinsx);
     m_width_p.resize(m_nbinsx);

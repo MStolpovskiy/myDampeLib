@@ -18,10 +18,7 @@ myDampeLib::DmpAnalysis::DmpAnalysis(string filename, string option/*=RECREATE*/
     openOutputFile(option);
 }
 
-myDampeLib::DmpAnalysis::~DmpAnalysis()
-{
-    closeOutputFile();
-}
+myDampeLib::DmpAnalysis::~DmpAnalysis() {;}
 
 void myDampeLib::DmpAnalysis::openOutputFile(string option/*="RECREATE"*/)
 {
@@ -68,45 +65,15 @@ void myDampeLib::DmpAnalysis::add2TChain(string filename, bool verbose/*=true*/)
     mNEvents = mChain->GetEntries();
 }
 
-void myDampeLib::DmpAnalysis::openTTree(const char * treename)
+void myDampeLib::DmpAnalysis::openTTree(const char * filename, const char * treename)
 {
-    mTree = (TTree*)f->Get(treename);
-}
-
-void myDampeLib::DmpAnalysis::addBranch(int * var, string varname)
-{
-    string t = varname + "/I";
-    mTree->Branch(varname.c_str(), var, t.c_str());
-}
-
-void myDampeLib::DmpAnalysis::addBranch(float * var, string varname)
-{
-    string t = varname + "/F";
-    mTree->Branch(varname.c_str(), var, t.c_str());
-}
-
-void myDampeLib::DmpAnalysis::addBranch(double * var, string varname)
-{
-    string t = varname + "/D";
-    mTree->Branch(varname.c_str(), var, t.c_str());
-}
-
-void myDampeLib::DmpAnalysis::addBranch(int * var, int len, string varname)
-{
-    string t = varname + "[" + to_string(len) + "]/I";
-    mTree->Branch(varname.c_str(), var, t.c_str());
-}
-
-void myDampeLib::DmpAnalysis::addBranch(float * var, int len, string varname)
-{
-    string t = varname + "[" + to_string(len) + "]/F";
-    mTree->Branch(varname.c_str(), var, t.c_str());
-}
-
-void myDampeLib::DmpAnalysis::addBranch(double * var, int len, string varname)
-{
-    string t = varname + "[" + to_string(len) + "]/D";
-    mTree->Branch(varname.c_str(), var, t.c_str());
+    TFile * f = TFile::Open(filename, "READ");
+    if (f) {
+        mTreeCopy = (TTree* )f->Get(treename);
+	if (mTreeCopy->GetEntries() != mNEvents)
+	    throw "NEvents in copied tree and in the TChain are not the same!";
+    }
+    mOutputFile -> cd();
 }
 
 void myDampeLib::DmpAnalysis::run(int n/*=-1*/)

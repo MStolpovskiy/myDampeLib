@@ -26,7 +26,7 @@ public:
     // Double_t corrEnergy_(DmpStkTrack* t_track, DmpStkSiCluster* t_cluster);
 
     void setTargetParameters(Double_t t_mp_p,  Double_t t_width_p,
-							 Double_t t_mp_He, Double_t t_width_He);
+                             Double_t t_mp_He, Double_t t_width_He);
     void setTargetParameters(Double_t t_mp_p,  Double_t t_mp_He);
     TF1 * getFitFunction(int t_ibin);
 
