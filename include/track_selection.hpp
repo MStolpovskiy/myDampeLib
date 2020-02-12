@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _TRACKSELECTION
+#define _TRACKSELECTION
 
 #include <fstream>
 #include <iostream>
@@ -80,3 +81,5 @@ namespace myDampeLib {
         bool psdMatch(DmpStkTrack * track, DmpEvent * event) const;
     };
 }
+
+#endif

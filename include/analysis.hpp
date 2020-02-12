@@ -1,3 +1,6 @@
+#ifndef _ANALYSIS
+#define _ANALYSIS
+
 #include <iostream> 
 #include <stdlib.h>
 #include <fstream>
@@ -108,3 +111,5 @@ namespace myDampeLib {
 	TTree * mTreeCopy;
     };
 }
+
+#endif

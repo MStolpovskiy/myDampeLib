@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _ETACORR
+#define _ETACORR
 
 #include <iostream>
 #include <fstream>
@@ -54,3 +55,5 @@ private:
     Double_t m_mp_Helium;
     Double_t m_width_Helium;
 };
+
+#endif

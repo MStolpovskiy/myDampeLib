@@ -1,3 +1,6 @@
+#ifndef _PSDCHARGE
+#define _PSDCHARGE
+
 #include <iostream>
 #include <stdlib.h>
 #include <fstream>
@@ -39,3 +42,5 @@ namespace myDampeLib {
 	double psdCharge(DmpStkTrack * track, DmpEvtPsdRec *psdRec,
 	                 int * ibar1, int * ibar2, bool mc=false);
 }
+
+#endif
