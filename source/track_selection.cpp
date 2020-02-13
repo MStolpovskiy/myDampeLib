@@ -100,7 +100,7 @@ void myDampeLib::DmpTrackSelector::readBadChannelsFile() {
     }
 }
 
-bool myDampeLib::DmpTrackSelector::hasBadChannel(DmpStkTrack * track, DmpEvent * pev) const{
+int myDampeLib::DmpTrackSelector::hasBadChannel(DmpStkTrack * track, DmpEvent * pev) const{
     TClonesArray * stkclusters = pev->GetStkSiClusterCollection();
 
     // Loop over clusters
@@ -123,11 +123,11 @@ bool myDampeLib::DmpTrackSelector::hasBadChannel(DmpStkTrack * track, DmpEvent *
             int maxc = cluster->getIndex1() + cluster->getNstrip() -1;
 
             for(int i = minc; i <= maxc; i++){
-                if(mBadChannelList[ladder][i]) return true;
+                if(mBadChannelList[ladder][i]) return ipoint;
             }
         }
     }
-    return false;
+    return -1;
 }
 
 bool myDampeLib::DmpTrackSelector::psdMatch(DmpStkTrack * track, DmpEvent * event) const {

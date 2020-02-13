@@ -68,6 +68,14 @@ namespace myDampeLib {
          */    
         bool pass(DmpStkTrack * track, DmpEvent * event, Select type) const;
 
+        /**
+         * Returns the number of the first 
+         * encountered STK layer (from 0 to 11) in which
+         * the cluster contains a bad channel
+         * If no bad channels, return -1
+         */
+        int hasBadChannel(DmpStkTrack * track, DmpEvent * event) const;
+
     private:
         vector<Select> mSelectTypes;
 
@@ -75,7 +83,7 @@ namespace myDampeLib {
         vector<vector<bool> > mBadChannelList;
         string mBadChannelsFile;
         void readBadChannelsFile();
-        bool hasBadChannel(DmpStkTrack * track, DmpEvent * event) const;
+        
 
         // PSD match
         bool psdMatch(DmpStkTrack * track, DmpEvent * event) const;
