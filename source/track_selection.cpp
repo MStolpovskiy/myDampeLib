@@ -3,8 +3,13 @@
 #include <algorithm>
 
 
-myDampeLib::DmpTrackSelector::DmpTrackSelector() 
+myDampeLib::DmpTrackSelector::DmpTrackSelector() :
+    DmpTrackSelector("bad_chan.txt")
+{;}
+
+myDampeLib::DmpTrackSelector::DmpTrackSelector(const char * file)
 {
+    mBadChannelsFile = file;
     mSelectTypes.resize(0);
 
     mBadChannelList.resize(NLADDERS);
@@ -15,11 +20,12 @@ myDampeLib::DmpTrackSelector::DmpTrackSelector()
     }
 }
 
-myDampeLib::DmpTrackSelector::DmpTrackSelector(const char * file) :
-    DmpTrackSelector()
+void myDampeLib::DmpTrackSelector::setSelectTypes(vector<Select> types)
 {
-    mBadChannelsFile = file;
-} 
+    for (vector<Select>::iterator it = types.begin(); it != types.end(); it++) {
+        addSelect(*it);
+    }
+}
 
 void myDampeLib::DmpTrackSelector::addSelect(Select type){
     vector<Select>::iterator it;
@@ -57,11 +63,11 @@ bool myDampeLib::DmpTrackSelector::selected(DmpStkTrack* track, DmpEvent * event
 bool myDampeLib::DmpTrackSelector::pass(DmpStkTrack * track, DmpEvent * event, Select type) const {
     switch (type) {
         case stk_bad_channel :
-            return hasBadChannel(track, event);
+            return (hasBadChannel(track, event) != -1);
             break;
         case psd_match :
             return psdMatch(track, event);
-	    break;
+        break;
         default :
             return true;
     }

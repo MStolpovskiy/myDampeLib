@@ -43,7 +43,7 @@ namespace myDampeLib {
                     psd_match
                     };
 
-        void setSelectTypes(vector<Select> types) {mSelectTypes = types;}
+        void setSelectTypes(vector<Select> types);
         vector<Select> selectTypes() const {return mSelectTypes;}
 
         /**
