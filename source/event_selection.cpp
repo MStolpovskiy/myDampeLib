@@ -3,7 +3,8 @@
 #include "psd_charge.hpp"
 #include "definitions.hpp"
 
-myDampeLib::DmpEventSelector::DmpEventSelector(bool check_all/*=false*/)
+myDampeLib::DmpEventSelector::DmpEventSelector(const char * bad_chan_file,
+                                               bool check_all/*=false*/)
 {
     mSelectTypes.resize(0);
     mHselect = new TH1I("Hselect", "Selection criteria", SELECT_N_ITEMS + 1, 0, SELECT_N_ITEMS + 1);
@@ -16,16 +17,21 @@ myDampeLib::DmpEventSelector::DmpEventSelector(bool check_all/*=false*/)
 	    case let : type_str = "LET"; break;
 	    case has_STK_track : type_str = "has STK track"; break;
 	    case has_PSD_track : type_str = "has PSD track"; break;
+        case no_bad_clu_STK : type_str = "no bad STK channels"; break;
 	    case not_side_in   : type_str = "not side-in"; break;
 	    default: type_str = "";
 	}
         mHselect->GetXaxis()->SetBinLabel(i+1, type_str.c_str());
     }
     if (check_all) checkAll();
+
+    mTrackSelector = new DmpTrackSelector(bad_chan_file);
 }
 
 myDampeLib::DmpEventSelector::~DmpEventSelector()
-{;}
+{
+    delete mTrackSelector;
+}
 
 void myDampeLib::DmpEventSelector::setSelectTypes(vector<Select> types)
 {
@@ -72,6 +78,8 @@ bool myDampeLib::DmpEventSelector::pass(DmpEvent * event, Select type)
             ret = hasSTKtrack(event); break;
         case has_PSD_track :
             ret = hasPSDtrack(event); break;
+        case no_bad_clu_STK :
+            ret = noBadCluSTK(event); break;
         case not_side_in :
             ret = notSideIn(event); break;
         default :
@@ -96,8 +104,7 @@ bool myDampeLib::DmpEventSelector::hasSTKtrack(DmpEvent * pev) const
 
 bool myDampeLib::DmpEventSelector::hasPSDtrack(DmpEvent * pev) const
 {
-    myDampeLib::DmpTrackSelector track_selector;
-    track_selector.addSelect(myDampeLib::DmpTrackSelector::psd_match);
+    mTrackSelector->addSelect(myDampeLib::DmpTrackSelector::psd_match);
 
     DmpStkTrackHelper * stk_helper = new DmpStkTrackHelper(pev->GetStkKalmanTrackCollection (),
                                                            true, 
@@ -106,7 +113,21 @@ bool myDampeLib::DmpEventSelector::hasPSDtrack(DmpEvent * pev) const
     stk_helper -> SortTracks(3, true); // most strigent selection
     DmpStkTrack * stktrack = stk_helper->GetTrack(0);
 
-    return track_selector.selected(stktrack, pev);
+    return mTrackSelector->selected(stktrack, pev);
+}
+
+bool myDampeLib::DmpEventSelector::noBadCluSTK(DmpEvent * pev) const
+{
+    mTrackSelector->addSelect(myDampeLib::DmpTrackSelector::stk_bad_channel);
+
+    DmpStkTrackHelper * stk_helper = new DmpStkTrackHelper(pev->GetStkKalmanTrackCollection (),
+                                                           true, 
+                                                           pev->pEvtBgoRec(),
+                                                           pev->pEvtBgoHits());
+    stk_helper -> SortTracks(3, true); // most strigent selection
+    DmpStkTrack * stktrack = stk_helper->GetTrack(0);
+    int bad_layer = mTrackSelector->hasBadChannel(stktrack, pev);
+    return (bad_layer == -1) || (bad_layer >= 4);
 }
 
 bool myDampeLib::DmpEventSelector::notSideIn(DmpEvent * pev) const

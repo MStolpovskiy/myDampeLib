@@ -22,13 +22,14 @@
 namespace myDampeLib {
     class DmpEventSelector {
     public:
-        DmpEventSelector(bool check_all=false);
+        DmpEventSelector(const char * bad_chan_file, bool check_all=false);
         ~DmpEventSelector();
 
         enum Select{het, // High energy trigger
                     let, // Low energy trigger
                     has_STK_track,
                     has_PSD_track,
+                    no_bad_clu_STK,
                     not_side_in,
                     SELECT_N_ITEMS
                    };
@@ -83,6 +84,14 @@ namespace myDampeLib {
          */
         bool notSideIn(DmpEvent * event) const;
         static constexpr float mMaxLayerRatio = 0.25;
+
+        /*
+         * Best STK track has no bad channels in first two XY layers
+         * (or equivalently, first 4 X or Y layers)
+         */
+        bool noBadCluSTK(DmpEvent * pev) const;
+
+        DmpTrackSelector * mTrackSelector;
     };
 }
 
