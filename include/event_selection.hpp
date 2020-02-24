@@ -21,6 +21,7 @@
 
 namespace myDampeLib {
     class DmpEventSelector {
+    public:
         DmpEventSelector(bool check_all=false);
         ~DmpEventSelector();
 
@@ -30,15 +31,15 @@ namespace myDampeLib {
                     has_PSD_track,
                     not_side_in,
                     SELECT_N_ITEMS
-                   }
+                   };
 
-        void setSelectTypes(vector<Select> types)
+        void setSelectTypes(vector<Select> types);
         vector<Select> selectTypes() const {return mSelectTypes;}
 
         void checkAll() {
             vector<Select> types(SELECT_N_ITEMS);
             for (int i=0; i<SELECT_N_ITEMS; i++)
-                types[i] = i;
+                types[i] = (Select)i;
             setSelectTypes(types);
         }
 
@@ -64,7 +65,7 @@ namespace myDampeLib {
          */    
         bool pass(DmpEvent * event, Select type);
 
-        TH1I hSelect() const {return mHselect;}
+        TH1I * hSelect() const {return mHselect;}
 
     private:
         vector<Select> mSelectTypes;
@@ -81,7 +82,7 @@ namespace myDampeLib {
          * Removes the side-in events by BGO 
          */
         bool notSideIn(DmpEvent * event) const;
-        static const float mMaxLayerRatio = 0.25;
+        static constexpr float mMaxLayerRatio = 0.25;
     };
 }
 

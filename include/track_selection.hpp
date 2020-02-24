@@ -75,14 +75,15 @@ namespace myDampeLib {
          * If no bad channels, return -1
          */
         int hasBadChannel(DmpStkTrack * track, DmpEvent * event) const;
-
+        void setBadChannelsFile(string file) {mBadChannelsFile = file;}
+        bool readBadChannelsFile();
+       
     private:
         vector<Select> mSelectTypes;
 
         // Bad channel check
         vector<vector<bool> > mBadChannelList;
         string mBadChannelsFile;
-        void readBadChannelsFile();
         
 
         // PSD match

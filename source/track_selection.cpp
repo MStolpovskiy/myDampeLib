@@ -7,9 +7,12 @@ myDampeLib::DmpTrackSelector::DmpTrackSelector() :
     DmpTrackSelector("bad_chan.txt")
 {;}
 
+myDampeLib::DmpTrackSelector::~DmpTrackSelector() 
+{;}
+
 myDampeLib::DmpTrackSelector::DmpTrackSelector(const char * file)
 {
-    mBadChannelsFile = file;
+    setBadChannelsFile(file);
     mSelectTypes.resize(0);
 
     mBadChannelList.resize(NLADDERS);
@@ -73,13 +76,13 @@ bool myDampeLib::DmpTrackSelector::pass(DmpStkTrack * track, DmpEvent * event, S
     }
 }
 
-void myDampeLib::DmpTrackSelector::readBadChannelsFile() {
+bool myDampeLib::DmpTrackSelector::readBadChannelsFile() {
     ifstream infile(mBadChannelsFile.c_str());  
     if (!infile)
     {
         std::cout << "Can't open Bad Channels file: " << mBadChannelsFile;
         std::cout << " ==> throwing exception!" << std::endl;
-        throw;
+        return false;
     }
 
     std::string line;
@@ -104,6 +107,7 @@ void myDampeLib::DmpTrackSelector::readBadChannelsFile() {
             mBadChannelList[ildr][bdchnl] = true;
         }
     }
+    return true;
 }
 
 int myDampeLib::DmpTrackSelector::hasBadChannel(DmpStkTrack * track, DmpEvent * pev) const{

@@ -1,21 +1,33 @@
+#include "event_selection.hpp"
 #include "track_selection.hpp"
 #include "psd_charge.hpp"
 #include "definitions.hpp"
 
-#define PRINTER(name) #name
-
 myDampeLib::DmpEventSelector::DmpEventSelector(bool check_all/*=false*/)
 {
     mSelectTypes.resize(0);
-    mHselect = new TH1I("Hselect", "Selection criteria", SELECT_N_ITEMS, 0, SELECT_N_ITEMS);
-    for (i=1; i <= SELECT_N_ITEMS; i++) {
-        Select type = i-1;
-        mHselect->GetXaxis()->SetBinLabel(i, PRINTER(type));
+    mHselect = new TH1I("Hselect", "Selection criteria", SELECT_N_ITEMS + 1, 0, SELECT_N_ITEMS + 1);
+    mHselect->GetXaxis()->SetBinLabel(1, "All");
+    for (int i=1; i <= SELECT_N_ITEMS; i++) {
+        Select type = (Select)(i-1);
+	string type_str;
+	switch (type) {
+	    case het : type_str = "HET"; break;
+	    case let : type_str = "LET"; break;
+	    case has_STK_track : type_str = "has STK track"; break;
+	    case has_PSD_track : type_str = "has PSD track"; break;
+	    case not_side_in   : type_str = "not side-in"; break;
+	    default: type_str = "";
+	}
+        mHselect->GetXaxis()->SetBinLabel(i+1, type_str.c_str());
     }
     if (check_all) checkAll();
 }
 
-void myDampeLib::DmpTrackSelector::setSelectTypes(vector<Select> types)
+myDampeLib::DmpEventSelector::~DmpEventSelector()
+{;}
+
+void myDampeLib::DmpEventSelector::setSelectTypes(vector<Select> types)
 {
     for (vector<Select>::iterator it = types.begin(); it != types.end(); it++) {
         addSelect(*it);
@@ -63,9 +75,11 @@ bool myDampeLib::DmpEventSelector::pass(DmpEvent * event, Select type)
         case not_side_in :
             ret = notSideIn(event); break;
         default :
-            ret = true;
+            ret = false;
     }
-    if (ret) mHselect->Fill(type);
+    mHselect->Fill(0);
+    if (ret) mHselect->Fill(type+1);
+    return ret;
 }
 
 bool myDampeLib::DmpEventSelector::hasSTKtrack(DmpEvent * pev) const
@@ -75,14 +89,14 @@ bool myDampeLib::DmpEventSelector::hasSTKtrack(DmpEvent * pev) const
                                                            pev->pEvtBgoRec(),
                                                            pev->pEvtBgoHits());
     stk_helper -> SortTracks(3, true); // most strigent selection
-    ntracks = stk_helper->GetSize();
+    int ntracks = stk_helper->GetSize();
     delete stk_helper;
     return ntracks > 0;
 }
 
 bool myDampeLib::DmpEventSelector::hasPSDtrack(DmpEvent * pev) const
 {
-    myDampeLib::DmpTrackSelector::DmpTrackSelector track_selector;
+    myDampeLib::DmpTrackSelector track_selector;
     track_selector.addSelect(myDampeLib::DmpTrackSelector::psd_match);
 
     DmpStkTrackHelper * stk_helper = new DmpStkTrackHelper(pev->GetStkKalmanTrackCollection (),
