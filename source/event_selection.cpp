@@ -1,5 +1,4 @@
 #include "event_selection.hpp"
-#include "track_selection.hpp"
 #include "psd_charge.hpp"
 #include "definitions.hpp"
 
@@ -58,12 +57,16 @@ void myDampeLib::DmpEventSelector::removeSelect(Select type)
 
 bool myDampeLib::DmpEventSelector::selected(DmpEvent * event)
 {
+    bool ret;
+    mHselect->Fill(0);
     for (vector<Select>::const_iterator it = mSelectTypes.begin();
          it != mSelectTypes.end(); 
          ++it) {
-        if(!pass(event, *it)) return false;
+        ret = pass(event, *it);
+	if (ret) mHselect->Fill(*it + 1);
+	else break;
     }
-    return true;
+    return ret;
 }
 
 bool myDampeLib::DmpEventSelector::pass(DmpEvent * event, Select type)
@@ -85,8 +88,6 @@ bool myDampeLib::DmpEventSelector::pass(DmpEvent * event, Select type)
         default :
             ret = false;
     }
-    mHselect->Fill(0);
-    if (ret) mHselect->Fill(type+1);
     return ret;
 }
 

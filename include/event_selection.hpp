@@ -19,6 +19,9 @@
 #include "DmpStkTrack.h"
 #include "DmpEvtPsdRec.h"
 
+#include "track_selection.hpp"
+
+
 namespace myDampeLib {
     class DmpEventSelector {
     public:
