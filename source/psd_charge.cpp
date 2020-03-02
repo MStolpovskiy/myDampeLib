@@ -20,11 +20,11 @@ double myDampeLib::psdEnergy(DmpStkTrack * track, DmpEvtPsdRec *psdRec,
 
             // Get hit point and path length
             double * len = new double[2];
-            if(!mc && !gPsdECor->GetPathLengthPosition(ilayer, ibar, globDirection, globImpact, len))
-                continue;
-            if(mc && !gPsdECor->GetPathLPMC(ilayer, ibar, globDirection, globImpact, len))
-                continue;
-            // len[0] -- hit point
+	    bool check_fd = !mc && gPsdECor->GetPathLengthPosition(ilayer, ibar, globDirection, globImpact, len);
+	    bool check_mc = mc && gPsdECor->GetPathLPMC(ilayer, ibar, globDirection, globImpact, len);
+            if(!check_fd && !check_mc) continue;
+            
+	    // len[0] -- hit point
             // len[1] -- path length
 
             switch (ilayer) {
@@ -36,8 +36,8 @@ double myDampeLib::psdEnergy(DmpStkTrack * track, DmpEvtPsdRec *psdRec,
             etemp *= 10. / len[1]; // 10. is the psd bar thickness in mm
 
             // correction for the attenuation
-            double corr = gPsdECor -> GetPsdECorSp3(ilayer, ibar, len[0]);
-            // double corr = gPsdECor -> GetPsdECor(ilayer, ibar, len[0]);
+// version DmpSoftware-r8421            double corr = gPsdECor -> GetPsdECorSp3(ilayer, ibar, len[0]);
+            double corr = gPsdECor -> GetPsdECor(ilayer, ibar, len[0]);
             etemp *= corr;
 
             e += etemp;

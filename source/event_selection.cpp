@@ -91,7 +91,7 @@ bool myDampeLib::DmpEventSelector::pass(DmpEvent * event, Select type)
     return ret;
 }
 
-bool myDampeLib::DmpEventSelector::hasSTKtrack(DmpEvent * pev) const
+bool myDampeLib::DmpEventSelector::hasSTKtrack(DmpEvent * pev)
 {
     DmpStkTrackHelper * stk_helper = new DmpStkTrackHelper(pev->GetStkKalmanTrackCollection (),
                                                            true, 
@@ -99,35 +99,19 @@ bool myDampeLib::DmpEventSelector::hasSTKtrack(DmpEvent * pev) const
                                                            pev->pEvtBgoHits());
     stk_helper -> SortTracks(3, true); // most strigent selection
     int ntracks = stk_helper->GetSize();
+    if (ntracks > 0) mSTKtrack = stk_helper->GetTrack(0);
     delete stk_helper;
     return ntracks > 0;
 }
 
 bool myDampeLib::DmpEventSelector::hasPSDtrack(DmpEvent * pev) const
 {
-    mTrackSelector->addSelect(myDampeLib::DmpTrackSelector::psd_match);
-
-    DmpStkTrackHelper * stk_helper = new DmpStkTrackHelper(pev->GetStkKalmanTrackCollection (),
-                                                           true, 
-                                                           pev->pEvtBgoRec(),
-                                                           pev->pEvtBgoHits());
-    stk_helper -> SortTracks(3, true); // most strigent selection
-    DmpStkTrack * stktrack = stk_helper->GetTrack(0);
-
-    return mTrackSelector->selected(stktrack, pev);
+    return mTrackSelector->pass(mSTKtrack, pev, DmpTrackSelector::psd_match);
 }
 
 bool myDampeLib::DmpEventSelector::noBadCluSTK(DmpEvent * pev) const
 {
-    mTrackSelector->addSelect(myDampeLib::DmpTrackSelector::stk_bad_channel);
-
-    DmpStkTrackHelper * stk_helper = new DmpStkTrackHelper(pev->GetStkKalmanTrackCollection (),
-                                                           true, 
-                                                           pev->pEvtBgoRec(),
-                                                           pev->pEvtBgoHits());
-    stk_helper -> SortTracks(3, true); // most strigent selection
-    DmpStkTrack * stktrack = stk_helper->GetTrack(0);
-    int bad_layer = mTrackSelector->hasBadChannel(stktrack, pev);
+    int bad_layer = mTrackSelector->hasBadChannel(mSTKtrack, pev);
     return (bad_layer == -1) || (bad_layer >= 4);
 }
 

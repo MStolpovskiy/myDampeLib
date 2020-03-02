@@ -72,7 +72,7 @@ bool myDampeLib::DmpTrackSelector::pass(DmpStkTrack * track, DmpEvent * event, S
             return psdMatch(track, event);
         break;
         default :
-            return true;
+            return false;
     }
 }
 
@@ -155,11 +155,9 @@ bool myDampeLib::DmpTrackSelector::psdMatch(DmpStkTrack * track, DmpEvent * even
             double e = psdRec->GetEdep(ilayer, ibar);
             if (e == 0) continue;
             double * len = new double[2];
-            if(!mc && !gPsdECor->GetPathLengthPosition(ilayer, ibar, direction, impact, len))
-                continue;
-            if(mc && !gPsdECor->GetPathLPMC(ilayer, ibar, direction, impact, len))
-                continue;
-            return true;
+	    bool check_fd = !mc && gPsdECor->GetPathLengthPosition(ilayer, ibar, direction, impact, len);
+	    bool check_mc = mc && gPsdECor->GetPathLPMC(ilayer, ibar, direction, impact, len);
+	    if (check_fd || check_mc) return true;
         }
     }
     return false;

@@ -75,7 +75,7 @@ namespace myDampeLib {
         vector<Select> mSelectTypes;
         TH1I * mHselect;
 
-        bool hasSTKtrack(DmpEvent * event) const;
+        bool hasSTKtrack(DmpEvent * event);
 
         /*
          * Best STK track passes through both PSD layers
@@ -95,6 +95,7 @@ namespace myDampeLib {
         bool noBadCluSTK(DmpEvent * pev) const;
 
         DmpTrackSelector * mTrackSelector;
+	DmpStkTrack * mSTKtrack;
     };
 }
 
