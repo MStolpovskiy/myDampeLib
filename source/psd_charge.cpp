@@ -36,8 +36,9 @@ double myDampeLib::psdEnergy(DmpStkTrack * track, DmpEvtPsdRec *psdRec,
             etemp *= 10. / len[1]; // 10. is the psd bar thickness in mm
 
             // correction for the attenuation
-// version DmpSoftware-r8421            double corr = gPsdECor -> GetPsdECorSp3(ilayer, ibar, len[0]);
-            double corr = gPsdECor -> GetPsdECor(ilayer, ibar, len[0]);
+            // version DmpSoftware-r8421            
+	    double corr = gPsdECor -> GetPsdECorSp3(ilayer, ibar, len[0]);
+            // double corr = gPsdECor -> GetPsdECor(ilayer, ibar, len[0]);
             etemp *= corr;
 
             e += etemp;
@@ -49,7 +50,7 @@ double myDampeLib::psdEnergy(DmpStkTrack * track, DmpEvtPsdRec *psdRec,
     return ret;
 }
 
-double myDampeLib::psdCharge(double e, double proton_peak/*=2.07*/) {
+double myDampeLib::psdCharge(double e, double proton_peak/*=0.07*/) {
     // proton_peak -- position of the proton peak in the dE/dx distribution
     return TMath::Sqrt(e / proton_peak);
 }

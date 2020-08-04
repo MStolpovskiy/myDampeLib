@@ -95,22 +95,26 @@ namespace myDampeLib {
         /*
         The virtual function to redefine
         */
-        virtual void analyseOneEvent() = 0;
+        virtual void analyseOneEvent(DmpEvent * pev) = 0;
 
     protected:
         string mOutputFilename;
         TFile * mOutputFile;
 
         DmpChain * mChain;
+	string mFileList;
         int mNFilesChained;
         int mNEvents;
 
         int mCurrentEvent;
 
         bool mSelected;
+	bool mMC;
 
         TTree * mTree;
 	TTree * mTreeCopy;
+
+	bool mInterestingEvent;
     };
 }
 

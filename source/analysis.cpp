@@ -16,6 +16,7 @@ myDampeLib::DmpAnalysis::DmpAnalysis(string filename, string option/*=RECREATE*/
     mNFilesChained(0)
 {
     openOutputFile(option);
+    mMC = false;
 }
 
 myDampeLib::DmpAnalysis::~DmpAnalysis() {;}
@@ -33,7 +34,7 @@ void myDampeLib::DmpAnalysis::openOutputFile(string option/*="RECREATE"*/)
 void myDampeLib::DmpAnalysis::closeOutputFile()
 {
     mOutputFile->cd();
-    mTree->Write();
+    if (mTree != NULL) mTree->Write();
     // mOutputFile->Write();
     mOutputFile->Close();
     // delete mOutputFile;
@@ -42,6 +43,7 @@ void myDampeLib::DmpAnalysis::closeOutputFile()
 void myDampeLib::DmpAnalysis::setTChain(const char * filename, bool verbose/*=true*/)
 {
     mChain = new DmpChain("CollectionTree");
+    mFileList = filename;
     ifstream runlist(filename);
     string line;
     mNFilesChained = 0;
@@ -70,8 +72,8 @@ void myDampeLib::DmpAnalysis::openTTree(const char * filename, const char * tree
     TFile * f = TFile::Open(filename, "READ");
     if (f) {
         mTreeCopy = (TTree* )f->Get(treename);
-	if (mTreeCopy->GetEntries() != mNEvents)
-	    throw "NEvents in copied tree and in the TChain are not the same!";
+//	if (mTreeCopy->GetEntries() != mNEvents)
+//	    throw "NEvents in copied tree and in the TChain are not the same!";
     }
     mOutputFile -> cd();
 }
@@ -85,9 +87,29 @@ void myDampeLib::DmpAnalysis::run(int n/*=-1*/)
             cout << "Processing percentage: " << percentage << "% \n";
         }
 
+	DmpEvent * pev = mChain->GetDmpEvent();
+
+        // is it MC ?
+        if (mCurrentEvent == 0) mMC = (pev->pEvtSimuHeader() != nullptr);
+
         mSelected = true;
-        this -> analyseOneEvent();
-        if (mSelected)
+	mInterestingEvent = false;
+        this -> analyseOneEvent(pev);
+
+        if (mSelected && mTree != NULL) {
             this -> mTree -> Fill();
+        }
+
+        if (mInterestingEvent) {
+            cout << "This event is interesting! \n \t " ;
+            if (!mMC) {
+                DmpEvtHeader * header = pev->pEvtHeader();
+                cout << "dmp-validate `cat " << mFileList << "` --displaysonly --neventdisplays=1 --sec=" << header->GetSecond() <<
+                    " --msec=" << header->GetMillisecond() << endl;
+            }
+            else {
+                cout << "dmp-validate `cat " << mFileList << "` --displaysonly --neventdisplays=1 --nskipeventdisplays=" << mCurrentEvent << endl;
+            }
+        }
     }
 }

@@ -12,33 +12,36 @@
 
 #include "DmpEvtHeader.h"
 #include "DmpRootEvent.h"
-#include "DmpEvtPsdRec.h"
 #include "DmpStkSiCluster.h"
 #include "DmpStkTrackHelper.h"
-#include "DmpSvcPsdEposCor.h"
 #include "DmpStkTrack.h"
 #include "DmpEvtPsdRec.h"
 
 #include "track_selection.hpp"
 
+#define CHI2MAX 15.
 
 namespace myDampeLib {
     class DmpEventSelector {
     public:
-        DmpEventSelector(const char * bad_chan_file, bool check_all=false);
+        DmpEventSelector(bool check_all=false);
         ~DmpEventSelector();
 
-        enum Select{het, // High energy trigger
+        enum Select{
+                    bgo_skim_cuts, // Standard set of skim cuts
+                    het, // High energy trigger
                     let, // Low energy trigger
                     has_STK_track,
-                    has_PSD_track,
-                    no_bad_clu_STK,
-                    not_side_in,
+		    has_only_one_STK_track,
+		    bgo_psd_match,
                     SELECT_N_ITEMS
                    };
 
         void setSelectTypes(vector<Select> types);
         vector<Select> selectTypes() const {return mSelectTypes;}
+
+	void setTrackSelector(DmpTrackSelector * trackSelector) {mTrackSelector = trackSelector;}
+	DmpTrackSelector * trackSelector() const {return mTrackSelector;}
 
         void checkAll() {
             vector<Select> types(SELECT_N_ITEMS);
@@ -71,16 +74,30 @@ namespace myDampeLib {
 
         TH1I * hSelect() const {return mHselect;}
 
+	/**
+	 * Returns the best STK track
+	 */
+	DmpStkTrack * stkTrack() const {return mSTKtrack;}
+        
+        /**
+	 * Return the number of tracks with chi2 lower than the specified number
+	 */
+        int Ntracks() const { return mNtracks; }
+
+	/**
+	 * Set the distance range in mm in which the
+	 * BGO direction should match the PSD hit
+	 */
+	void setBgoPsdDist(float d) {mBgoPsdDist = d;}
+
+	void setTrackSelectorTypes(vector<DmpTrackSelector::Select> v) { mTrackSelector -> setSelectTypes(v); }
+
     private:
         vector<Select> mSelectTypes;
         TH1I * mHselect;
 
         bool hasSTKtrack(DmpEvent * event);
-
-        /*
-         * Best STK track passes through both PSD layers
-         */
-        bool hasPSDtrack(DmpEvent * event) const;
+        int mNtracks;
 
         /*
          * Removes the side-in events by BGO 
@@ -89,10 +106,28 @@ namespace myDampeLib {
         static constexpr float mMaxLayerRatio = 0.25;
 
         /*
-         * Best STK track has no bad channels in first two XY layers
-         * (or equivalently, first 4 X or Y layers)
-         */
-        bool noBadCluSTK(DmpEvent * pev) const;
+	 * Remove events with undefined slope and interception point
+	 */
+        bool bgoSlopeIntercept(DmpEvent * event) const;
+
+        /*
+	 * Remove events with shower not contained in BGO volume
+	 */
+        bool bgoContainment(DmpEvent * event) const;
+
+        /*
+	 * in first 3 layers the max bar is not on the edge
+	 */
+        bool bgoMaxBar(DmpEvent * event) const;
+
+        /*
+         * Returns true if there is only one track that satisfies
+	 * the mTrackSelector criteria
+	 */
+	bool hasOnlyOneSTKtrack(DmpEvent * event);
+
+	float mBgoPsdDist;
+	bool bgoPsdMatch(DmpEvent * event) const;
 
         DmpTrackSelector * mTrackSelector;
 	DmpStkTrack * mSTKtrack;
