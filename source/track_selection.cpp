@@ -1,4 +1,5 @@
 #include "track_selection.hpp"
+#include "etacorr.hpp"
 
 #include <algorithm>
 #include <math.h>
@@ -21,6 +22,7 @@ myDampeLib::DmpTrackSelector::DmpTrackSelector(const char * file)
     mSTKProtonMipE = 60.;
     mSTKXProtonMipRange = 0.1;
     mSTKYProtonMipRange = 0.1;
+    mDistFromPrimCut = 0.;
 }
 
 myDampeLib::DmpTrackSelector::~DmpTrackSelector()
@@ -88,6 +90,8 @@ bool myDampeLib::DmpTrackSelector::pass(DmpStkTrack * track, DmpEvent * event, S
 	    return stkXYoverlap(track);
         case stk_missing_impact_point :
 	    return stkNoMissingImpactPoint(track);
+        case stk_impact_first_layer :
+	    return stkImpactFirstLayer(track);
         case stk_bgo_dist_high :
             return stk2bgoCut(track, event);
         case stk_chi2_cut :
@@ -100,6 +104,8 @@ bool myDampeLib::DmpTrackSelector::pass(DmpStkTrack * track, DmpEvent * event, S
 	    return stkNo1stripClusters(track, event);
         case proton_mip :
 	    return isProtonMip(track, event);
+        case match_primary :
+            return dist_from_prim_cut(track, event);
         default :
             return false;
     }
@@ -222,6 +228,10 @@ bool myDampeLib::DmpTrackSelector::stkNoMissingImpactPoint(DmpStkTrack * track) 
     if (mNimpactPoints == 1) ret = hasX || hasY;
     if (mNimpactPoints == 2) ret = hasX && hasY;
     return ret;
+}
+
+bool myDampeLib::DmpTrackSelector::stkImpactFirstLayer(DmpStkTrack * track) const {
+    if (track->getImpactPointPlane() > 0) return false;
 }
 
 float myDampeLib::DmpTrackSelector::stk2bgoAngl(DmpStkTrack * track, DmpEvent * event) const {
@@ -357,6 +367,84 @@ bool myDampeLib::DmpTrackSelector::isProtonMip(DmpStkTrack * track, DmpEvent * e
     return ret;
 }
 
+float myDampeLib::DmpTrackSelector::charge_consistency(DmpStkTrack * track, DmpEvent * pev, int charge) const {
+    // Returns the sum of (e - charge**2)**2 
+    // where e are the charge measurements from PSD and first two layers of STK
+    // and charge is for example 1 for proton and 2 for helium
+
+    float e[6] = {0., 0., 0., 0., 0., 0.};
+
+    // PSD charge
+    int * igbar = new int(-1);
+    bool mc = (pev->pEvtSimuHeader() != nullptr);
+    double psde = psdEnergy(track, pev->pEvtPsdHits(), igbar, mc, 1);
+    e[0] = psde / 2.07;
+    psde = psdEnergy(track, pev->pEvtPsdHits(), igbar, mc, 2);
+    e[1] = psde / 2.07;
+    
+    // STK charge
+    EtaCorr etaCorr;
+    etaCorr.setTargetParameters(64.27, 6., 257.75, 6.*257.75/64.27);
+    TClonesArray * stkclusters = pev->GetStkSiClusterCollection();
+    double costheta = track->getDirection().CosTheta();
+    for (int ipoint=0; ipoint<track->GetNPoints(); ipoint++) {
+	for (int ixy=0; ixy<2; ixy++) {
+	    // Check if cluster is associated to a hit                                                                       
+	    DmpStkSiCluster* cluster;
+	    if(ixy == 0)
+		cluster = track -> GetClusterX(ipoint, stkclusters);
+	    else
+		cluster = track -> GetClusterY(ipoint, stkclusters);
+	    if(!cluster) continue;
+	    double estk = cluster -> getEnergy() * costheta;
+	    double eta = etaCorr.calcEta(cluster);
+	    int index = ixy + (cluster -> getPlane()) * 2;
+	    if (index < 4) {
+		e[index + 2] = etaCorr.corrEnergy(estk, eta, costheta) / 60.; // 60 is the proton mip position in STK
+	    }
+	}
+    }
+
+    float cc = 0.;
+    for(int i = 0; i < 6; i++) {
+	if (e[i] != 0.) {
+	    cc += pow(e[i] - charge*charge, 2);
+	}
+    }
+
+    return cc;
+}
+
+float myDampeLib::DmpTrackSelector::dist_from_prim(DmpStkTrack * track, DmpEvent * pev) const {
+    // Reconstruction of the primary track based on the linear model of :
+    // - charge consistency of the track (only proton and helium!)
+    // - inpact plane
+    // - chi2
+
+    // Charge consistency for the proton
+    float ccp = charge_consistency(track, pev, 1);
+
+    // Charge consistency for the helium
+    float cch = charge_consistency(track, pev, 2);
+
+    // Impact plane (all harcoded values are from the training I did in python)
+    float ip = track->getImpactPointPlane() == 0 ? -1.31115115 : 1.21147072;
+
+    // chi2
+    double chi2 = track -> getChi2NDOF();
+
+    // Coefs of the linear (Ridge) model:
+    // -2.72187012,  2.8741397 ,  0.83496084,  0.12752761
+    float dist = -2.72187012 * log10(ccp) + 2.8741397 * log10(cch) + 0.83496084 * ip + 0.12752761 * chi2;
+
+    return dist;
+}
+
+bool myDampeLib::DmpTrackSelector::dist_from_prim_cut(DmpStkTrack * track, DmpEvent * pev) const {
+    float dist = dist_from_prim(track, pev);
+    return dist < mDistFromPrimCut;
+}
+
 bool myDampeLib::DmpTrackSelector::first_is_better(DmpStkTrack * lhs, DmpStkTrack * rhs, DmpEvent * pev) const {
     // Ternary comparison used.
     // -1 means lhs track is better
@@ -428,6 +516,15 @@ bool myDampeLib::DmpTrackSelector::first_is_better(DmpStkTrack * lhs, DmpStkTrac
 
     short ret = bad_chan_comp + nonoverlaps_comp + 
 	        missing_impact_comp + bgo_stk_angle_comp + bgo_stk_dist_comp +
-	        chi2_comp + npoints_comp + proton_mip_comp;
+                chi2_comp + npoints_comp + proton_mip_comp;
+
     return ret < 0;
+}
+
+bool myDampeLib::DmpTrackSelector::first_is_closer(DmpStkTrack * lhs, DmpStkTrack * rhs, DmpEvent * pev) const {
+    // Track corresponds to the primary particle                                                                                
+    float lscore = dist_from_prim(lhs, pev);
+    float rscore = dist_from_prim(rhs, pev);
+
+    return lscore < rscore;
 }

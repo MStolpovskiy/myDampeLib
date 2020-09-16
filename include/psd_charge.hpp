@@ -33,14 +33,15 @@
 #include "DmpStkTrackHelper.h"
 #include "DmpStkSiCluster.h"
 #include "DmpEvtPsdRec.h"
+#include "DmpEvtPsdHits.h"
 
 namespace myDampeLib {
-	double psdEnergy(DmpStkTrack * track, DmpEvtPsdRec *psdRec,
-	                 int * ibar1, int * ibar2, bool mc=false, int layer=0);
+        double psdEnergy(DmpStkTrack * track, DmpEvtPsdHits * psdHits,
+	                 int * igbar, bool mc=false, int layer=0);
 
 	double psdCharge(double e, double proton_peak=2.07);
-	double psdCharge(DmpStkTrack * track, DmpEvtPsdRec *psdRec,
-	                 int * ibar1, int * ibar2, bool mc=false);
+	double psdCharge(DmpStkTrack * track, DmpEvtPsdHits *psdHits,
+	                 int * igbar, bool mc=false);
 }
 
 #endif

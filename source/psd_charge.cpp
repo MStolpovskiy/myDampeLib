@@ -1,8 +1,8 @@
 #include "psd_charge.hpp"
 
-double myDampeLib::psdEnergy(DmpStkTrack * track, DmpEvtPsdRec *psdRec,
-                 int * ibar1, int * ibar2, bool mc/*=false*/, int layer/*=0*/) {
-    // layer -- get energy from a specific psd layer
+double myDampeLib::psdEnergy(DmpStkTrack * track, DmpEvtPsdHits * psdHits,
+                             int * igbar, bool mc/*=false*/, int layer/*=0*/) {
+    // layer -- get energy from a specific psd layer (1 or 2)
 
     TVector3 globImpact = track->getImpactPoint();
     TVector3 globDirection = track->getDirection();
@@ -10,41 +10,44 @@ double myDampeLib::psdEnergy(DmpStkTrack * track, DmpEvtPsdRec *psdRec,
     double e = 0.;
     int nhits = 0;
 
-    // Loop over psd layers
-    for (int ilayer = 0; ilayer < 2; ilayer++) {
+    // Loop over psd hits
+    for (int ihit = 0; ihit < psdHits->GetHittedBarNumber(); ihit++) {
+	int ilayer = psdHits->GetLayerID(ihit);
         if (layer != 0 && ilayer != layer-1) continue;
-        // Loop over psd bars
-        for (int ibar = 0; ibar < 41; ibar++) {
-            // psd energy, no correction
-            double etemp = psdRec->GetEdep(ilayer, ibar);
 
-            // Get hit point and path length
-            double * len = new double[2];
-	    bool check_fd = !mc && gPsdECor->GetPathLengthPosition(ilayer, ibar, globDirection, globImpact, len);
-	    bool check_mc = mc && gPsdECor->GetPathLPMC(ilayer, ibar, globDirection, globImpact, len);
-            if(!check_fd && !check_mc) continue;
+	short gid = (psdHits->fGlobalBarID)[ihit];
+
+	// psd energy, no correction
+	double etemp = (psdHits->fEnergy)[ihit];
+
+	// Get hit point and path length
+        // len[0] -- hit point
+        // len[1] -- path length
+	double * len = new double[2];
+	TVector3 hpos(-1000,-1000,-1000);
+
+	bool isHit = false;
+	if (!mc) {
+	    isHit = gPsdECor->GetPathLengthPoint(gid, globDirection, globImpact, len, hpos);
+	} else {
+	    isHit = gPsdECor->GetPathLPMCPoint  (gid, globDirection, globImpact, len, hpos);
+	}
+	if(!isHit) continue; // no match between PSD and STK
             
-	    // len[0] -- hit point
-            // len[1] -- path length
+	*igbar = gid;
 
-            switch (ilayer) {
-                case 0 : *ibar1 = ibar; break;
-                case 1 : *ibar2 = ibar; break;
-            }
+        // correction for the path length
+        etemp *= 10. / len[1]; // 10. is the psd bar thickness in mm
 
-            // correction for the path length
-            etemp *= 10. / len[1]; // 10. is the psd bar thickness in mm
+        // correction for the attenuation
+	float pos = (ilayer==0) ? hpos.x() : hpos.y();
+	double corr = gPsdECor->GetPsdECorSp3(gid, pos);
+	//double corr = gPsdECor->GetPsdMipAttE(gid, pos);
+	etemp *= corr;
 
-            // correction for the attenuation
-            // version DmpSoftware-r8421            
-	    double corr = gPsdECor -> GetPsdECorSp3(ilayer, ibar, len[0]);
-            // double corr = gPsdECor -> GetPsdECor(ilayer, ibar, len[0]);
-            etemp *= corr;
-
-            e += etemp;
-            nhits += 1;
-        } // end bar loop
-    } // end layer loop
+	e += etemp;
+	nhits += 1;
+    } // end hit loop
     double ret = e / nhits;
     if(!std::isnormal(ret)) ret = 0.;
     return ret;
@@ -55,8 +58,8 @@ double myDampeLib::psdCharge(double e, double proton_peak/*=0.07*/) {
     return TMath::Sqrt(e / proton_peak);
 }
 
-double myDampeLib::psdCharge(DmpStkTrack * track, DmpEvtPsdRec *psdRec,
-                 int * ibar1, int * ibar2, bool mc/*=false*/) {
-    double e = psdEnergy(track, psdRec, ibar1, ibar2, mc);
+double myDampeLib::psdCharge(DmpStkTrack * track, DmpEvtPsdHits *psdHits,
+                             int * igbar, bool mc/*=false*/) {
+    double e = psdEnergy(track, psdHits, igbar, mc);
     return psdCharge(e);
 }

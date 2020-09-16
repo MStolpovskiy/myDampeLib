@@ -19,6 +19,8 @@
 #include "DmpStkTrack.h"
 #include "DmpEvtPsdRec.h"
 
+#include "psd_charge.hpp"
+
 #define NLADDERS     192
 #define NCHANNELS    384
 #define NLAYERS      6
@@ -49,6 +51,7 @@ namespace myDampeLib {
 	 *                   use setXYnonoverlaps to specify the limit
 	 * stk_missing_impact_point -- remove tracks for which the impact point is measured on
 	 *                             1 or 2 (set by setNimpactPoints()) planes.
+	 * stk_impact_first_layer -- impact point must be in the first layer of STK
 	 * stk_bgo_dist_high -- select tracks that match the BGO shower on the first BGO layer
 	 *                      use setMaxDistStk2Bgo to specify the distance limit
 	 *                      use setMaxAngStk2Bgo to specify the angle limit
@@ -67,18 +70,27 @@ namespace myDampeLib {
 	 *               use setSTKProtonMipRange to set the relative width of the Landau peak
 	 *                   typical value is 0.1
 	 * psd_match -- STK track matches a PSD cluster
+	 * match_primary -- Using a linear model trained on the Proton and Helium MC
+	 *                  we reconstruct the distance from the track to the primary particle
+	 *                  use setDistFromPrimCut to set the distance cut
+	 *                      typical value is around 0.1-0.
 	 */
         enum Select{stk_bad_channel,
 		    stk_xy_overlap,
 		    stk_missing_impact_point,
+		    stk_impact_first_layer,
 		    stk_bgo_dist_high,
 		    stk_chi2_cut,
 		    stk_npoints,
 		    stk_nXYhits,
 		    stk_no_1strip_clusters,
 		    proton_mip,
-                    psd_match
+                    psd_match,
+		    match_primary
                     };
+
+	enum Compare{standard,
+		     prim_dist};
 
 	/**
 	 * Specify track selection criteria with a vector of type Select
@@ -167,15 +179,30 @@ namespace myDampeLib {
 	void setSTKYProtonMipRange(float r) {mSTKYProtonMipRange = r;}
 	float stkYProtonMipRange() const {return mSTKYProtonMipRange;}
 
+	void setDistFromPrimCut(float d) {mDistFromPrimCut = d;}
+	float distFromPrimCut() const {return mDistFromPrimCut;}
+
 	void getSMean(DmpStkTrack * track, DmpEvent * event, float * s_mean_xy) const;
 
         /*
 	 * Compare the track quality
+	 * first_is_better -- comparison based on chi2, npoints etc.
+	 * first_is_closer -- comparison based on the reconstructed distance from the primary track
 	 */
+	void setComparison(Compare c) {mCompare = c;}
+	Compare comparison() const {return mCompare;}
 	bool first_is_better(DmpStkTrack * lhs, DmpStkTrack * rhs, DmpEvent * event) const;
+	bool first_is_closer(DmpStkTrack * lhs, DmpStkTrack * rhs, DmpEvent * event) const;
+
+	/*
+	 * Reconstruct the distance to the primary particle
+	 * Reconstruction is based on the linear model trained separately in Python
+	 */
+	float dist_from_prim(DmpStkTrack * track, DmpEvent * pev) const;
 
     private:
         vector<Select> mSelectTypes;
+	Compare mCompare;
 
         // Bad channel check
         vector<vector<bool> > mBadChannelList;
@@ -189,6 +216,7 @@ namespace myDampeLib {
 	bool stkXYoverlap(DmpStkTrack * track) const;
 	int mNimpactPoints;
 	bool stkNoMissingImpactPoint(DmpStkTrack * track) const;
+	bool stkImpactFirstLayer(DmpStkTrack * track) const;
 	float mMaxDistStk2Bgo;
 	float mMaxAngStk2Bgo;
 	bool stk2bgoCut(DmpStkTrack * track, DmpEvent * event) const;
@@ -199,6 +227,14 @@ namespace myDampeLib {
 	int mMinNXYhits;
 	bool stkNXYhits(DmpStkTrack * track) const;
 	bool stkNo1stripClusters(DmpStkTrack * track, DmpEvent * event) const;
+
+	// PSD-STK charge consistency
+	float charge_consistency(DmpStkTrack * track, DmpEvent * pev, int charge) const;
+
+        // Track distance from the primary particle. 
+	// Reconstructed using a linear model, trained separately in Python
+	float mDistFromPrimCut;
+	bool dist_from_prim_cut(DmpStkTrack * track, DmpEvent * event) const;
 
         // Proton MIP selection
 	float mSTKProtonMipE;

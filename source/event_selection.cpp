@@ -107,8 +107,15 @@ bool myDampeLib::DmpEventSelector::hasSTKtrack(DmpEvent * pev)
 	    else 
 	    {
 		DmpStkTrack * best_track = (DmpStkTrack*)tracks->ConstructedAt(best_track_index);
-		if(mTrackSelector->first_is_better(track, best_track, pev)) {
-		    best_track_index = i;
+		if(mTrackSelector->comparison() == DmpTrackSelector::prim_dist) {
+		    if(mTrackSelector->first_is_closer(track, best_track, pev)) {
+			best_track_index = i;
+		    }
+		}
+		else {
+                    if(mTrackSelector->first_is_better(track, best_track, pev)) {
+                        best_track_index = i;
+                    }
 		}
 	    }
 	    mNtracks++;
